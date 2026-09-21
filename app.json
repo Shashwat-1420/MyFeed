@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "SavedFeed",
+    "slug": "savedfeed",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/bookmark.svg",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0D0D0D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.savedfeed.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0D0D"
+      },
+      "package": "com.savedfeed.app",
+      "intentFilters": [
+        {
+          "action": "SEND",
+          "data": [{ "mimeType": "text/plain" }],
+          "category": ["DEFAULT", "BROWSABLE"]
+        },
+        {
+          "action": "SEND",
+          "data": [{ "mimeType": "text/*" }],
+          "category": ["DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./public/bookmark.svg"
+    }
+  }
+}
