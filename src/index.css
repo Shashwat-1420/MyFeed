@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0D0D0D;
+    --bg-secondary: #1A1A1A;
+    --bg-tertiary: #242424;
+    --border-color: #2E2E2E;
+    --text-primary: #F2F2F2;
+    --text-secondary: #9A9A9A;
+    --text-tertiary: #5A5A5A;
+    --accent-primary: #7C6EF6;
+    --accent-hover: #9585F8;
+  }
+
+  .light-mode {
+    --bg-primary: #F7F7F8;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #EFEFEF;
+    --border-color: #E4E4E7;
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --accent-primary: #6C5FF0;
+    --accent-hover: #7C6EF6;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5A5A5A;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Button fill animation */
+@keyframes buttonFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-button-fill {
+  animation: buttonFill 0.3s ease-out forwards;
+}
+
+/* Flick away animation */
+@keyframes flickUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.animate-flick-up {
+  animation: flickUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
