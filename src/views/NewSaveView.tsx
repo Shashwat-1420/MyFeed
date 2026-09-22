@@ -14,7 +14,7 @@ import { CategoryBadge } from '../components/common/CategoryBadge';
 import { SkeletonLoader } from '../components/common/SkeletonLoader';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category, PlatformSource } from '../types/savedfeed';
-import { ArrowLeft, Sparkles, Link as LinkIcon, FileText, Check, Share2 } from 'lucide-react-native';
+import { ArrowLeft, Sparkles, Link as LinkIcon, FileText, Check, Share2, Cpu } from 'lucide-react-native';
 import { celebrate } from '../lib/confetti';
 import { useThemeColors } from '../lib/theme';
 
@@ -37,6 +37,7 @@ export const NewSaveView: React.FC = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<Category>('uncategorized');
   const [tags, setTags] = useState<string[]>([]);
+  const [aiEngine, setAiEngine] = useState<string>('');
   const [noteContent, setNoteContent] = useState('');
 
   // Auto-detect platform icon as user types URL
@@ -71,6 +72,7 @@ export const NewSaveView: React.FC = () => {
 
       setCategory(aiResult.category);
       setTags(aiResult.tags);
+      setAiEngine(aiResult.engine ?? '');
     } catch (err) {
       console.error(err);
     } finally {
@@ -317,6 +319,20 @@ export const NewSaveView: React.FC = () => {
                       </View>
                     ))}
                   </View>
+
+                  {/* Which engine categorized this save */}
+                  {!!aiEngine && (
+                    <View className="flex-row items-center gap-1.5 mt-2">
+                      <Cpu size={12} color={c.gold} />
+                      <Text className="text-[10px] text-gold font-mono">
+                        {aiEngine === 'on-device'
+                          ? 'Categorized on-device · local model, offline'
+                          : aiEngine === 'edge'
+                          ? 'Categorized via edge function'
+                          : 'Categorized with keyword fallback'}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             )}

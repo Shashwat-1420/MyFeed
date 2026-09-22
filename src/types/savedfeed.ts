@@ -70,4 +70,6 @@ export interface AIAdapterResult {
   tags: string[];
   embedding?: number[];
   summary?: string;
+  /** Which engine produced this result — surfaced in the UI for the demo. */
+  engine?: 'on-device' | 'edge' | 'keywords';
 }

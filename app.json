@@ -32,9 +32,20 @@
     },
     "plugins": [
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      [
         "expo-share-intent",
         {
-          "androidIntentFilters": ["text/*", "image/*"],
+          "androidIntentFilters": [
+            "text/*",
+            "image/*"
+          ],
           "iosActivationRules": {
             "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 1,

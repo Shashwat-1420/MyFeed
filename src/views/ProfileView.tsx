@@ -25,6 +25,8 @@ export const ProfileView: React.FC = () => {
     setTab,
     activeAiProvider,
     activeAiModel,
+    localModelReady,
+    localModelProgress,
   } = useSavedFeedStore();
   const c = useThemeColors();
 
@@ -235,6 +237,15 @@ export const ProfileView: React.FC = () => {
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Categorization Model:</Text>
               <Text className="text-[11px] font-mono text-gold">{activeAiModel}</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-[11px] text-dim font-mono">Status:</Text>
+              <Text
+                style={{ color: localModelReady ? '#4ADE80' : '#FBBF24' }}
+                className="text-[11px] font-mono"
+              >
+                {localModelReady ? 'ready · fully offline' : `downloading ${localModelProgress}%`}
+              </Text>
             </View>
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Fallback:</Text>

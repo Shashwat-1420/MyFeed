@@ -1,5 +1,11 @@
 import { Category, AIAdapterResult } from '../types/savedfeed';
 import { supabase, isSupabaseConfigured } from './supabase';
+import {
+  buildCategorizePrompt,
+  extractAssistantText,
+  getLocalModelSession,
+  parseCategorization,
+} from './localModel';
 
 export async function processSaveWithAI(payload: {
   url?: string;
@@ -7,21 +13,51 @@ export async function processSaveWithAI(payload: {
   description?: string;
   rawText?: string;
 }): Promise<AIAdapterResult> {
-  // If Supabase is connected, call the Edge Function process-save
+  /*
+   * 1. On-device model (preferred — fully offline, nothing leaves the phone).
+   *    This is the iQOO-rubric path: a local open-source model at the core.
+   */
+  const session = getLocalModelSession();
+  if (session?.isReady && session.sendMessage) {
+    try {
+      const turn = await session.sendMessage(
+        buildCategorizePrompt({
+          title: payload.title,
+          description: payload.description,
+          url: payload.url,
+        })
+      );
+      const raw = extractAssistantText(turn);
+      const parsed = parseCategorization(raw);
+      if (parsed) {
+        return {
+          category: parsed.category,
+          tags: parsed.tags,
+          summary: `On-device summary: key takeaways from ${payload.title}.`,
+          engine: 'on-device',
+        };
+      }
+      console.warn('[on-device] unparseable output, falling back. Raw:', JSON.stringify(raw));
+    } catch (e) {
+      console.warn('On-device categorization failed; falling back to keywords:', e);
+    }
+  }
+
+  // 2. Optional Supabase edge function (only when explicitly configured).
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.functions.invoke('process-save', {
         body: payload,
       });
       if (!error && data) {
-        return data as AIAdapterResult;
+        return { ...(data as AIAdapterResult), engine: 'edge' };
       }
     } catch (e) {
       console.warn('Edge Function process-save failed, falling back to client simulation:', e);
     }
   }
 
-  // Client-side simulation fallback (100% working offline mode)
+  // 3. Keyword fallback (kept so the app always works, even before the model loads).
   await new Promise((resolve) => setTimeout(resolve, 800));
 
   const text = `${payload.title} ${payload.description || ''} ${payload.rawText || ''}`.toLowerCase();
@@ -62,5 +98,6 @@ export async function processSaveWithAI(payload: {
     category,
     tags,
     summary: `AI auto-summary: Key takeaways from ${payload.title}.`,
+    engine: 'keywords',
   };
 }

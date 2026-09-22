@@ -30,6 +30,11 @@ interface SavedFeedState {
   activeAiProvider: string;
   activeAiModel: string;
 
+  // On-device AI status
+  localModelReady: boolean;
+  localModelProgress: number;
+  setLocalModelStatus: (ready: boolean, progress: number) => void;
+
   // Prototype Simulators
   notification: NotificationState | null;
   sharedUrlPayload: string | null;
@@ -88,7 +93,10 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
   profile: DEFAULT_PROFILE,
   darkMode: true,
   activeAiProvider: 'On-device · ExecuTorch',
-  activeAiModel: 'SmolLM2-360M-Instruct (Q4)',
+  activeAiModel: 'Qwen2.5-0.5B-Instruct (8da4w)',
+
+  localModelReady: false,
+  localModelProgress: 0,
 
   notification: null,
   sharedUrlPayload: null,
@@ -101,6 +109,14 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
   // Theme is applied by the root <View> in App.tsx via vars() (src/lib/theme.ts),
   // so this only flips the flag — no DOM/classList (that was web-only).
   toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+
+  // Guarded so the ~100 download-progress ticks don't re-render needlessly.
+  setLocalModelStatus: (ready, progress) =>
+    set((state) =>
+      state.localModelReady === ready && state.localModelProgress === progress
+        ? state
+        : { localModelReady: ready, localModelProgress: progress }
+    ),
 
   addSave: (item) => {
     const newItem: SaveItem = {

@@ -168,6 +168,14 @@ The Vite app was replaced by an Expo/RN app **in the same repo**:
 - **Native constraints to remember:** no CSS gradients, no `backdrop-blur`, no `hover:`, no CSS
   `@keyframes`, no CSS grid, no `divide-*`/`space-x-*` (use `gap-*`), no `fixed` — see the Phase B
   list for the RN equivalents already in use.
+- **🚨 NEVER change a `className` string at runtime.** On this stack (NativeWind 4.2.7 + RN 0.86 +
+  New Architecture) a className that varies between renders sends the JS thread into a permanent
+  ~130% CPU spin and leaks memory (~600 MB/minute), which eventually ANRs the app. This is *not* a
+  React render loop — no re-renders are logged; the JS thread just burns. Keep `className` constant
+  and put anything dynamic in the `style` prop:
+  `style={{ backgroundColor: isActive ? '#FFC800' : c.panel }}`. `active:` variants are safe.
+  Verified after the fix: idle 11% CPU → 19–23% through share/tab/chip/mode interactions, memory
+  flat at ~560 MB.
 - **Icons:** `lucide-react-native` — pass `size`/`color`/`fill` props, not `className` (SVG props
   aren't reached by Tailwind). Use `useThemeColors()` for the colour.
 - **Planning docs are stale; source is truth.**

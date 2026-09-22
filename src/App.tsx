@@ -8,6 +8,7 @@ import { useShareIntent } from 'expo-share-intent';
 
 import { useSavedFeedStore } from './store/useSavedFeedStore';
 import { themeVars } from './lib/theme';
+import { useLocalModel } from './lib/localModel';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { SimulatedNotificationBanner } from './components/common/SimulatedNotificationBanner';
 
@@ -46,6 +47,18 @@ export const App: React.FC = () => {
 
   const shareIntentRef = useRef(shareIntent);
   shareIntentRef.current = shareIntent;
+
+  /*
+   * On-device AI: loads the local LLM once at startup (downloading it on first
+   * run) and publishes readiness + progress to the store for the UI.
+   */
+  const localModel = useLocalModel();
+  const setLocalModelStatus = useSavedFeedStore((s) => s.setLocalModelStatus);
+  const localModelProgress = Math.round(localModel.downloadProgress ?? 0);
+
+  useEffect(() => {
+    setLocalModelStatus(Boolean(localModel.isReady), localModelProgress);
+  }, [localModel.isReady, localModelProgress, setLocalModelStatus]);
 
   useEffect(() => {
     if (!hasShareIntent) return;
