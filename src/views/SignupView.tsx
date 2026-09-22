@@ -94,9 +94,8 @@ export const SignupView: React.FC = () => {
           <Pressable
             onPress={handleSubmit}
             disabled={isSubmitting}
-            className={`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 shadow-glow mt-6 ${
-              isSubmitting ? 'bg-gold/50' : 'bg-gold-fill active:opacity-80'
-            }`}
+            style={{ opacity: isSubmitting ? 0.6 : 1 }}
+            className="w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 shadow-glow mt-6 bg-gold-fill active:opacity-80"
           >
             {isSubmitting ? (
               <Text className="text-black font-semibold text-xs">Creating account...</Text>

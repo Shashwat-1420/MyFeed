@@ -42,13 +42,16 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
   return (
     <Pressable
       onPress={() => setScreen('save_detail', save.id)}
-      className={`w-[260px] h-[165px] bg-panel/90 border rounded-card flex-col justify-between overflow-hidden shrink-0 shadow-card ${
-        swipeState === 'reviewed'
-          ? 'opacity-0 border-gold'
-          : swipeState === 'skipped'
-          ? 'opacity-0 border-edge'
-          : 'border-gold/30'
-      }`}
+      style={{
+        opacity: swipeState === 'idle' ? 1 : 0,
+        borderColor:
+          swipeState === 'reviewed'
+            ? '#FFC800'
+            : swipeState === 'skipped'
+            ? '#2E2E2E'
+            : 'rgba(255,200,0,0.30)',
+      }}
+      className="w-[260px] h-[165px] bg-panel/90 border rounded-card flex-col justify-between overflow-hidden shrink-0 shadow-card"
     >
       {/* Top thumbnail 75px */}
       <View className="h-[75px] w-full relative bg-canvas overflow-hidden">

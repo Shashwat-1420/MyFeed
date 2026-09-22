@@ -37,9 +37,16 @@ export const BottomTabBar: React.FC = () => {
             <Pressable
               key={tab.id}
               onPress={() => setTab(tab.id)}
-              className={`flex-row items-center gap-2 px-3.5 py-2 rounded-xl active:opacity-80 ${
-                isActive ? 'bg-gold/20 border border-gold/40' : ''
-              }`}
+              style={
+                isActive
+                  ? {
+                      backgroundColor: 'rgba(255,200,0,0.20)',
+                      borderWidth: 1,
+                      borderColor: 'rgba(255,200,0,0.40)',
+                    }
+                  : undefined
+              }
+              className="flex-row items-center gap-2 px-3.5 py-2 rounded-xl active:opacity-80"
             >
               <Icon size={20} color={isActive ? c.gold : c.dim} />
               {isActive && (

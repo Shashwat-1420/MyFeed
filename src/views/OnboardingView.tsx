@@ -80,7 +80,12 @@ export const OnboardingView: React.FC = () => {
             <Pressable
               key={idx}
               onPress={() => setActiveSlide(idx)}
-              className={`h-2 rounded-full ${activeSlide === idx ? 'w-8 bg-gold-fill' : 'w-2 bg-edge'}`}
+              style={{
+                width: activeSlide === idx ? 32 : 8,
+                height: 8,
+                borderRadius: 9999,
+                backgroundColor: activeSlide === idx ? '#FFC800' : c.edge,
+              }}
             />
           ))}
         </View>

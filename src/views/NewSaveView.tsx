@@ -123,7 +123,8 @@ export const NewSaveView: React.FC = () => {
 
   return (
     <ScrollView
-      className={`flex-1 bg-canvas ${isFlickingSuccess ? 'opacity-0' : ''}`}
+      style={{ opacity: isFlickingSuccess ? 0 : 1 }}
+      className="flex-1 bg-canvas"
       contentContainerClassName="p-4 pb-10"
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
@@ -145,16 +146,11 @@ export const NewSaveView: React.FC = () => {
         </Text>
         <Pressable
           onPress={handleSave}
-          disabled={isSaving || !canSave}
-          className={`px-3.5 py-1.5 rounded-full ${
-            canSave ? 'bg-gold-fill shadow-glow' : 'bg-panel border border-gold/10'
-          }`}
+          disabled={isSaving}
+          style={{ opacity: canSave ? 1 : 0.45 }}
+          className="px-3.5 py-1.5 rounded-full bg-gold-fill shadow-glow"
         >
-          <Text
-            className={`text-xs font-display font-bold uppercase tracking-wider ${
-              canSave ? 'text-black' : 'text-dim'
-            }`}
-          >
+          <Text className="text-xs font-display font-bold uppercase tracking-wider text-black">
             {isSaving ? 'Saving...' : 'Save'}
           </Text>
         </Pressable>
@@ -174,30 +170,26 @@ export const NewSaveView: React.FC = () => {
       <View className="flex-row bg-panel border border-gold/30 rounded-xl p-1 mb-4">
         <Pressable
           onPress={() => setMode('link')}
-          className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${
-            mode === 'link' ? 'bg-gold-fill shadow-glow' : ''
-          }`}
+          style={mode === 'link' ? { backgroundColor: '#FFC800' } : undefined}
+          className="flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg"
         >
           <LinkIcon size={14} color={mode === 'link' ? '#000000' : c.muted} />
           <Text
-            className={`text-xs font-display font-bold uppercase tracking-wider ${
-              mode === 'link' ? 'text-black' : 'text-muted'
-            }`}
+            style={{ color: mode === 'link' ? '#000000' : c.muted }}
+            className="text-xs font-display font-bold uppercase tracking-wider"
           >
             Save Link
           </Text>
         </Pressable>
         <Pressable
           onPress={() => setMode('note')}
-          className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${
-            mode === 'note' ? 'bg-gold-fill shadow-glow' : ''
-          }`}
+          style={mode === 'note' ? { backgroundColor: '#FFC800' } : undefined}
+          className="flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg"
         >
           <FileText size={14} color={mode === 'note' ? '#000000' : c.muted} />
           <Text
-            className={`text-xs font-display font-bold uppercase tracking-wider ${
-              mode === 'note' ? 'text-black' : 'text-muted'
-            }`}
+            style={{ color: mode === 'note' ? '#000000' : c.muted }}
+            className="text-xs font-display font-bold uppercase tracking-wider"
           >
             Quick Note
           </Text>
@@ -228,34 +220,8 @@ export const NewSaveView: React.FC = () => {
             {/* Platform indicator */}
             <View className="flex-row items-center gap-2">
               <Text className="text-[10px] font-mono text-dim">Detected:</Text>
-              <View
-                className={`px-2 py-0.5 rounded ${
-                  detectedPlatform === 'instagram'
-                    ? 'bg-[#EC4899]/20'
-                    : detectedPlatform === 'youtube'
-                    ? 'bg-[#EF4444]/20'
-                    : detectedPlatform === 'reddit'
-                    ? 'bg-[#F97316]/20'
-                    : detectedPlatform === 'twitter'
-                    ? 'bg-[#3B82F6]/20'
-                    : 'bg-panel border border-gold/30'
-                }`}
-              >
-                <Text
-                  className="text-[10px] font-mono font-bold uppercase"
-                  style={{
-                    color:
-                      detectedPlatform === 'instagram'
-                        ? '#EC4899'
-                        : detectedPlatform === 'youtube'
-                        ? '#EF4444'
-                        : detectedPlatform === 'reddit'
-                        ? '#F97316'
-                        : detectedPlatform === 'twitter'
-                        ? '#3B82F6'
-                        : c.gold,
-                  }}
-                >
+              <View className="px-2 py-0.5 rounded bg-panel border border-gold/30">
+                <Text className="text-[10px] font-mono font-bold uppercase text-gold">
                   {detectedPlatform}
                 </Text>
               </View>
@@ -332,7 +298,6 @@ export const NewSaveView: React.FC = () => {
                     value={description}
                     onChangeText={setDescription}
                     multiline
-                    numberOfLines={2}
                     className="w-full text-xs text-muted border-b border-gold/30 py-1"
                   />
                 </View>
@@ -369,7 +334,6 @@ export const NewSaveView: React.FC = () => {
                 placeholder="Type your notes, ideas, or quick thoughts..."
                 placeholderTextColor={c.dim}
                 multiline
-                numberOfLines={5}
                 className="w-full bg-panel border border-gold/30 rounded-xl p-3 text-xs text-ink min-h-[120px]"
               />
             </View>
@@ -386,12 +350,16 @@ export const NewSaveView: React.FC = () => {
                     <Pressable
                       key={cat.id}
                       onPress={() => setCategory(cat.id as Category)}
-                      className={`px-3 py-2 rounded-xl border ${
-                        isActive ? 'bg-gold-fill border-gold' : 'bg-panel border-gold/30'
-                      }`}
+                      style={
+                        isActive
+                          ? { backgroundColor: '#FFC800', borderWidth: 1, borderColor: '#FFC800' }
+                          : { borderWidth: 1, borderColor: 'rgba(255,200,0,0.30)' }
+                      }
+                      className="px-3 py-2 rounded-xl bg-panel"
                     >
                       <Text
-                        className={`text-xs font-mono ${isActive ? 'text-black' : 'text-muted'}`}
+                        style={{ color: isActive ? '#000000' : c.muted }}
+                        className="text-xs font-mono"
                       >
                         {cat.emoji} {cat.label}
                       </Text>
@@ -407,21 +375,20 @@ export const NewSaveView: React.FC = () => {
       {/* Full width save action button */}
       <Pressable
         onPress={handleSave}
-        disabled={isSaving || !canSave}
-        className={`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 mt-4 ${
-          canSave ? 'bg-gold-fill shadow-glow-lg active:opacity-80' : 'bg-panel border border-gold/20'
-        }`}
+        disabled={isSaving}
+        style={{ opacity: canSave ? 1 : 0.45 }}
+        className="w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 mt-4 bg-gold-fill shadow-glow-lg active:opacity-80"
       >
         {isSaving ? (
-          <Text className={`text-xs font-display font-bold uppercase tracking-wider ${canSave ? 'text-black' : 'text-dim'}`}>
+          <Text className="text-xs font-display font-bold uppercase tracking-wider text-black">
             Saving to MyFeed...
           </Text>
         ) : (
           <>
-            <Text className={`text-xs font-display font-bold uppercase tracking-wider ${canSave ? 'text-black' : 'text-dim'}`}>
+            <Text className="text-xs font-display font-bold uppercase tracking-wider text-black">
               Save to MyFeed
             </Text>
-            <Check size={16} color={canSave ? '#000000' : c.dim} strokeWidth={3} />
+            <Check size={16} color="#000000" strokeWidth={3} />
           </>
         )}
       </Pressable>

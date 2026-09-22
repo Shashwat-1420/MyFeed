@@ -1,9 +1,10 @@
 import '../global.css';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BackHandler, Platform, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useShareIntent } from 'expo-share-intent';
 
 import { useSavedFeedStore } from './store/useSavedFeedStore';
 import { themeVars } from './lib/theme';
@@ -20,8 +21,51 @@ import { NewSaveView } from './views/NewSaveView';
 import { SaveDetailView } from './views/SaveDetailView';
 import { ProfileView } from './views/ProfileView';
 
+/*
+ * Share de-dupe. `hasShareIntent` can flap true/false around a single share and
+ * `shareIntent` is a fresh object each render, so naive handling re-fires
+ * `simulateShareIntent` in a loop (store write -> re-render -> ...), which
+ * starves the JS thread. We ignore an identical URL seen within a short window,
+ * while still allowing the same link to be shared again later.
+ */
+let lastHandledShareUrl = '';
+let lastHandledShareAt = 0;
+const SHARE_DEDUPE_MS = 5000;
+
 export const App: React.FC = () => {
   const { currentScreen, currentTab, darkMode } = useSavedFeedStore();
+
+  /*
+   * Share-to-app (Phase C #1). The Android share sheet delivers a URL/text here
+   * (filters configured in app.json). We route it into the existing
+   * sharedUrlPayload -> new_save flow, which already auto-fetches metadata and
+   * runs categorization.
+   */
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+  const simulateShareIntent = useSavedFeedStore((s) => s.simulateShareIntent);
+
+  const shareIntentRef = useRef(shareIntent);
+  shareIntentRef.current = shareIntent;
+
+  useEffect(() => {
+    if (!hasShareIntent) return;
+
+    const intent = shareIntentRef.current;
+    const incoming = (intent?.webUrl || intent?.text || '').trim();
+    const now = Date.now();
+    const isNewShare =
+      !!incoming && !(incoming === lastHandledShareUrl && now - lastHandledShareAt < SHARE_DEDUPE_MS);
+
+    if (isNewShare) {
+      lastHandledShareUrl = incoming;
+      lastHandledShareAt = now;
+      simulateShareIntent(incoming);
+    }
+
+    // Always acknowledge the intent so `hasShareIntent` flips back to false and
+    // the native module stops re-emitting it.
+    resetShareIntent();
+  }, [hasShareIntent, resetShareIntent, simulateShareIntent]);
 
   // Android hardware back: unwind nested screens before letting the OS exit.
   useEffect(() => {

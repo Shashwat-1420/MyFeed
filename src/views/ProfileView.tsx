@@ -117,12 +117,12 @@ export const ProfileView: React.FC = () => {
                 </View>
                 <Pressable
                   onPress={toggleDarkMode}
-                  className={`w-11 h-6 rounded-full p-1 ${darkMode ? 'bg-gold-fill' : 'bg-chip'}`}
+                  style={{ backgroundColor: darkMode ? '#FFC800' : c.chip }}
+                  className="w-11 h-6 rounded-full p-1"
                 >
                   <View
-                    className={`w-4 h-4 rounded-full bg-black ${
-                      darkMode ? 'self-end' : 'self-start'
-                    }`}
+                    style={{ alignSelf: darkMode ? 'flex-end' : 'flex-start' }}
+                    className="w-4 h-4 rounded-full bg-black"
                   />
                 </Pressable>
               </View>

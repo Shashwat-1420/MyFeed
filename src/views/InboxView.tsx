@@ -14,6 +14,17 @@ export const InboxView: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const c = useThemeColors();
 
+  /*
+   * NOTE: dynamic styling goes through `style`, never a changing className.
+   * NativeWind 4 + RN 0.86 (New Arch) spins + leaks when a className string
+   * changes at runtime, so className stays constant and only `style` varies.
+   */
+  const chipStyle = (isActive: boolean) =>
+    isActive
+      ? { backgroundColor: '#FFC800' }
+      : { backgroundColor: c.panel, borderWidth: 1, borderColor: 'rgba(255,200,0,0.30)' };
+  const chipTextColor = (isActive: boolean) => (isActive ? '#000000' : c.muted);
+
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 800);
@@ -64,16 +75,12 @@ export const InboxView: React.FC = () => {
           {/* All chip */}
           <Pressable
             onPress={() => setCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-full shrink-0 ${
-              categoryFilter === 'all'
-                ? 'bg-gold-fill shadow-glow'
-                : 'bg-panel border border-gold/30'
-            }`}
+            style={chipStyle(categoryFilter === 'all')}
+            className="px-3 py-1.5 rounded-full shrink-0"
           >
             <Text
-              className={`text-xs font-display font-bold uppercase tracking-wider ${
-                categoryFilter === 'all' ? 'text-black' : 'text-muted'
-              }`}
+              style={{ color: chipTextColor(categoryFilter === 'all') }}
+              className="text-xs font-display font-bold uppercase tracking-wider"
             >
               All ({saves.filter((s) => !s.is_archived).length})
             </Text>
@@ -82,11 +89,8 @@ export const InboxView: React.FC = () => {
           {/* Favourites chip */}
           <Pressable
             onPress={() => setCategoryFilter('favourites')}
-            className={`px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1 ${
-              categoryFilter === 'favourites'
-                ? 'bg-gold-fill shadow-glow'
-                : 'bg-panel border border-gold/30'
-            }`}
+            style={chipStyle(categoryFilter === 'favourites')}
+            className="px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1"
           >
             <Star
               size={12}
@@ -94,9 +98,8 @@ export const InboxView: React.FC = () => {
               fill={categoryFilter === 'favourites' ? '#000000' : 'none'}
             />
             <Text
-              className={`text-xs font-display font-bold uppercase tracking-wider ${
-                categoryFilter === 'favourites' ? 'text-black' : 'text-muted'
-              }`}
+              style={{ color: chipTextColor(categoryFilter === 'favourites') }}
+              className="text-xs font-display font-bold uppercase tracking-wider"
             >
               Favourites
             </Text>
@@ -110,23 +113,20 @@ export const InboxView: React.FC = () => {
               <Pressable
                 key={cat.id}
                 onPress={() => setCategoryFilter(cat.id as Category)}
-                className={`px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1 ${
-                  isActive ? 'bg-gold-fill shadow-glow' : 'bg-panel border border-gold/30'
-                }`}
+                style={chipStyle(isActive)}
+                className="px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1"
               >
                 <Text className="text-xs">{cat.emoji}</Text>
                 <Text
-                  className={`text-xs font-display font-bold uppercase tracking-wider ${
-                    isActive ? 'text-black' : 'text-muted'
-                  }`}
+                  style={{ color: chipTextColor(isActive) }}
+                  className="text-xs font-display font-bold uppercase tracking-wider"
                 >
                   {cat.label}
                 </Text>
                 {count > 0 && (
                   <Text
-                    className={`text-[10px] font-mono ${
-                      isActive ? 'text-black' : 'text-muted'
-                    }`}
+                    style={{ color: chipTextColor(isActive) }}
+                    className="text-[10px] font-mono"
                   >
                     ({count})
                   </Text>

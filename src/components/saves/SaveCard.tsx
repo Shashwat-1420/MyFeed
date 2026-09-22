@@ -34,9 +34,8 @@ export const SaveCard: React.FC<SaveCardProps> = ({
       <Pressable
         onPress={() => setScreen('save_detail', save.id)}
         onLongPress={() => setIsMenuOpen(true)}
-        className={`w-full bg-panel/90 border border-gold/20 rounded-card p-3.5 shadow-card relative overflow-hidden mb-3 active:opacity-90 ${
-          isDeleting ? 'opacity-0' : ''
-        }`}
+        style={{ opacity: isDeleting ? 0 : 1 }}
+        className="w-full bg-panel/90 border border-gold/20 rounded-card p-3.5 shadow-card relative overflow-hidden mb-3 active:opacity-90"
       >
         {/* Semantic search match indicator */}
         {semanticMatch && (

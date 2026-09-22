@@ -174,7 +174,8 @@ export const SaveDetailView: React.FC = () => {
                 return (
                   <View
                     key={idx}
-                    className={`flex-1 h-2 rounded-full ${isCompleted ? 'bg-gold-fill' : 'bg-chip'}`}
+                    style={{ backgroundColor: isCompleted ? '#FFC800' : c.chip }}
+                    className="flex-1 h-2 rounded-full"
                   />
                 );
               })}
@@ -190,9 +191,8 @@ export const SaveDetailView: React.FC = () => {
           <Pressable
             onPress={handleMarkReviewed}
             disabled={isFillingReviewed}
-            className={`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 ${
-              isFillingReviewed ? 'bg-[#10B981]' : 'bg-gold-fill shadow-glow-lg active:opacity-80'
-            }`}
+            style={{ backgroundColor: isFillingReviewed ? '#10B981' : '#FFC800' }}
+            className="w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 shadow-glow-lg active:opacity-80"
           >
             {isFillingReviewed ? (
               <>

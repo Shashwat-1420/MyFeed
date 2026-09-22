@@ -56,10 +56,9 @@ export const CategoriesView: React.FC = () => {
                   backgroundColor: `${cat.color}15`,
                   borderLeftColor: cat.color,
                   width: '48%',
+                  opacity: isEmpty ? 0.5 : 1,
                 }}
-                className={`border-l-4 border-y border-r border-gold/20 rounded-card p-3.5 flex-col justify-between h-[110px] active:opacity-80 shadow-card ${
-                  isEmpty ? 'opacity-50' : ''
-                }`}
+                className="border-l-4 border-y border-r border-gold/20 rounded-card p-3.5 flex-col justify-between h-[110px] active:opacity-80 shadow-card"
               >
                 <View className="flex-row items-center justify-between">
                   <Text className="text-2xl">{cat.emoji}</Text>
