@@ -7,6 +7,7 @@ import {
   Moon,
   Sun,
   Bell,
+  BellRing,
   Cpu,
   Mail,
   Download,
@@ -15,6 +16,7 @@ import {
   Shield,
 } from 'lucide-react-native';
 import { useThemeColors } from '../lib/theme';
+import { sendTestReminder } from '../lib/notifications';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -32,6 +34,13 @@ export const ProfileView: React.FC = () => {
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isTestingReminder, setIsTestingReminder] = useState(false);
+
+  const handleTestReminder = async () => {
+    setIsTestingReminder(true);
+    await sendTestReminder().catch(() => {});
+    setTimeout(() => setIsTestingReminder(false), 1500);
+  };
 
   const totalSaves = saves.length;
   const reviewedSaves = saves.reduce((acc, s) => acc + s.resurface_count, 0);
@@ -140,6 +149,20 @@ export const ProfileView: React.FC = () => {
                   </Text>
                 </View>
               </View>
+
+              {/* Demo trigger — fires the real local notification immediately */}
+              <Pressable
+                onPress={handleTestReminder}
+                className="w-full flex-row items-center justify-between p-3.5 border-t border-gold/15 active:bg-chip"
+              >
+                <View className="flex-row items-center gap-2.5">
+                  <BellRing size={16} color={c.gold} />
+                  <Text className="font-medium text-ink text-xs">
+                    {isTestingReminder ? 'Reminder sent ✓' : 'Send Test Reminder'}
+                  </Text>
+                </View>
+                <ChevronRight size={16} color={c.dim} />
+              </Pressable>
             </View>
           </View>
 

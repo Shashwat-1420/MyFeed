@@ -105,22 +105,56 @@ The Vite app was replaced by an Expo/RN app **in the same repo**:
 - **Verified:** `npx tsc --noEmit` → 0 errors; `npx expo export -p android` → bundled (3031 modules);
   `npx expo prebuild -p android` → succeeded and applied the share-intent filters.
 
-### Phase C — differentiating features, in value order — ⬜ TODO
+### Phase C — differentiating features, in value order
 
-1. **Share-to-app** (YouTube / X / Instagram share sheet → app). `expo-share-intent` is already
-   installed and its Android filters (`text/*`, `image/*`) are applied at prebuild. Remaining:
-   wire `useShareIntent()` in `App.tsx` → `simulateShareIntent`/`new_save` flow, and replace the
-   mock `fetchUrlMetadata` in `src/lib/scraper.ts` with real og: scraping (RN `fetch` has no CORS).
-2. **On-device AI categorization** — highest rubric value. Use **`react-native-executorch`**
-   or `llama.rn` with a quantized small model (SmolLM2-360M / Qwen2.5-0.5B / Gemma-2B class).
-   **Keep the keyword fallback in `aiAdapter.ts`.** See the NPU reality check in §4.
-3. **Anki-style spaced-repetition notifications** — upgrade `src/lib/resurface.ts` from the fixed
-   ladder `[1,3,7,14,30,60]d` to **SM-2**, and fire local notifications via `expo-notifications`
-   (already installed). `SimulatedNotificationBanner` is the current in-app stand-in.
-4. **Reading UX without WebView memory cost** — no persistent WebView; show extracted content
-   in-app, and **deep-link to the platform app first, fall back to Chrome Custom Tab**
+1. **Share-to-app** — ✅ DONE. `expo-share-intent` wired via `useShareIntent()` in `App.tsx` into
+   the `sharedUrlPayload` → `new_save` flow (URL de-duped with a cooldown, intent always
+   acknowledged). Verified on device: a YouTube/GitHub share opens "SHARED LINK RECEIVER" with the
+   platform detected and the preview populated. **Remaining (polish):** `fetchUrlMetadata` in
+   `src/lib/scraper.ts` is still the mock — replace with real og: scraping (RN `fetch` has no CORS).
+2. **On-device AI categorization** — ✅ DONE. `react-native-executorch` + **Qwen2.5-0.5B-Instruct
+   (8da4w)** running on the **XNNPACK CPU backend**. See "On-device AI" below for the details,
+   constraints and gotchas. Verified on device: a shared GitHub link was categorized *on-device*
+   and the UI reports **"Categorized on-device · local model, offline"**.
+3. **Anki-style spaced-repetition notifications** — ✅ DONE. `src/lib/resurface.ts` now implements
+   **SM-2** (`sm2Update`, ease factor floored at 1.3, intervals clamped to 365d) instead of the
+   fixed ladder, and `src/lib/notifications.ts` schedules a **real local notification** (no push
+   server, fires with the app closed) at the user's nudge time. Verified on device: reviewing a
+   save took it from 1→2 repetitions, 3→6 days, ease 2.50→2.60, and the reminder appeared in the
+   Android notification shade.
+   - `SaveItem` gained optional `easiness` / `interval_days`; old saves default to 2.5 / the ladder.
+   - The reminder is a **single daily notification** whose text is refreshed whenever `saves`
+     changes, so the due count stays accurate.
+   - `POST_NOTIFICATIONS` arrives via the library manifest — **no extra config plugin needed**.
+   - Profile → **Send Test Reminder** fires one immediately (demo-friendly).
+4. **Reading UX without WebView memory cost** — ⬜ TODO. No persistent WebView; show extracted
+   content in-app, and **deep-link to the platform app first, fall back to Chrome Custom Tab**
    (`expo-web-browser`).
 5. **Stretch: usage-stats-driven suggestions** — only if time permits.
+
+### On-device AI (Phase C #2) — how it works
+
+- **Library:** `react-native-executorch@0.10.2` (needs New Architecture, worklets ≥0.10, and
+  **`minSdkVersion` 26** via `expo-build-properties`). Peer native modules:
+  `react-native-blob-util`, `@kesha-antonov/react-native-background-downloader`.
+- **Important:** its npm **postinstall is blocked by npm by default** and downloads the prebuilt
+  ExecuTorch `.so` libs into `third-party/`. It is approved in `package.json` → `allowScripts`
+  (as `react-native-executorch@0.10.2`). If those libs are missing, the native build fails.
+- **Model:** `models.llm.QWEN2_5_0_5B.DEFAULT` — **~417 MB** `.pte`, downloaded on **first launch**
+  (into `Android/data/com.savedfeed.app/files/react-native-executorch/`). After that it is fully
+  offline. It loads into memory at app start (takes a few seconds).
+- **Wiring:** `src/lib/localModel.ts` holds the session at module scope so the non-React
+  `aiAdapter.processSaveWithAI` can use it; `App.tsx` mounts `useLocalModel()` once and publishes
+  readiness/progress to the store.
+- **Fallback chain in `aiAdapter.ts`:** on-device model → optional Supabase edge function →
+  **keyword classifier** (kept, so the app always works — including before the model is ready).
+  The result carries `engine: 'on-device' | 'edge' | 'keywords'`, surfaced in the New Save UI.
+- **Prompting a 0.5B model is the hard part.** A bare "return JSON" instruction is unreliable; it
+  needs a **system prompt + a one-shot example + a trailing `JSON:` cue**, and even then parsing
+  must be **tolerant** (strict JSON first, then scan for a known category id/label). Tags from a
+  model this size can be slightly off — acceptable, and the category is what matters.
+- **NPU:** still CPU-only (see §4). XNNPACK on Android; Vulkan is linked but the registry resolves
+  this model to XNNPACK. Qualcomm/MediaTek NPU offload remains a stretch, not a deliverable.
 
 ### Architecture decisions already made (do not re-litigate)
 

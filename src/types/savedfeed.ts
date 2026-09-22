@@ -34,6 +34,9 @@ export interface SaveItem {
   next_resurface_at: string | null;
   resurface_count: number;
   times_viewed: number;
+  /** SM-2 scheduling state (Phase C #3). Optional so old data still type-checks. */
+  easiness?: number;
+  interval_days?: number;
   is_archived: boolean;
   is_favourite: boolean;
   embedding?: number[];

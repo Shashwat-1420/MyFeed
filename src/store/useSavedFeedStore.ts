@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { SaveItem, Category, UserProfile } from '../types/savedfeed';
 import { MOCK_SAVES } from '../data/mockSaves';
-import { calculateNextResurface, isDueForResurface } from '../lib/resurface';
+import { calculateNextResurface, isDueForResurface, getResurfaceIntervalDays, sm2Update, nextResurfaceDate, SM2_DEFAULT_EASINESS, QUALITY_REVIEWED, QUALITY_SKIPPED, ReviewQuality } from '../lib/resurface';
 
 export type TabName = 'home' | 'inbox' | 'categories' | 'search';
 export type ScreenName = 'onboarding' | 'signup' | 'tabs' | 'new_save' | 'save_detail' | 'profile';
@@ -52,7 +52,7 @@ interface SavedFeedState {
   deleteSave: (id: string) => void;
   archiveSave: (id: string) => void;
   toggleFavourite: (id: string) => void;
-  markReviewed: (id: string) => void;
+  markReviewed: (id: string, quality?: ReviewQuality) => void;
   skipResurface: (id: string) => void;
 
   // Search & Filter
@@ -158,32 +158,50 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
       saves: state.saves.map((s) => (s.id === id ? { ...s, is_favourite: !s.is_favourite } : s)),
     })),
 
-  markReviewed: (id) => {
+  // SM-2 (Phase C #3): the interval adapts to recall instead of a fixed ladder.
+  markReviewed: (id, quality = QUALITY_REVIEWED) => {
     set((state) => ({
       saves: state.saves.map((s) => {
         if (s.id !== id) return s;
-        const nextCount = s.resurface_count + 1;
-        const nextDate = calculateNextResurface(nextCount);
+        const next = sm2Update(
+          {
+            repetitions: s.resurface_count,
+            interval_days: s.interval_days ?? getResurfaceIntervalDays(s.resurface_count),
+            easiness: s.easiness ?? SM2_DEFAULT_EASINESS,
+          },
+          quality
+        );
         return {
           ...s,
-          resurface_count: nextCount,
-          next_resurface_at: nextDate.toISOString(),
+          resurface_count: next.repetitions,
+          interval_days: next.interval_days,
+          easiness: next.easiness,
+          next_resurface_at: nextResurfaceDate(next.interval_days).toISOString(),
           times_viewed: s.times_viewed + 1,
         };
       }),
     }));
   },
 
+  // "Not now" is SM-2's failed-recall grade: reset the streak, see it tomorrow.
   skipResurface: (id) => {
     set((state) => ({
       saves: state.saves.map((s) => {
         if (s.id !== id) return s;
-        // Postpone by 3 days
-        const nextDate = new Date();
-        nextDate.setDate(nextDate.getDate() + 3);
+        const next = sm2Update(
+          {
+            repetitions: s.resurface_count,
+            interval_days: s.interval_days ?? getResurfaceIntervalDays(s.resurface_count),
+            easiness: s.easiness ?? SM2_DEFAULT_EASINESS,
+          },
+          QUALITY_SKIPPED
+        );
         return {
           ...s,
-          next_resurface_at: nextDate.toISOString(),
+          resurface_count: next.repetitions,
+          interval_days: next.interval_days,
+          easiness: next.easiness,
+          next_resurface_at: nextResurfaceDate(1).toISOString(),
         };
       }),
     }));

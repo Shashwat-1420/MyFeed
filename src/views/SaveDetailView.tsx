@@ -49,7 +49,8 @@ export const SaveDetailView: React.FC = () => {
     );
   }
 
-  const nextDays = getResurfaceIntervalDays(save.resurface_count);
+  const nextDays = save.interval_days ?? getResurfaceIntervalDays(save.resurface_count);
+  const easeFactor = save.easiness ?? 2.5;
 
   const handleMarkReviewed = () => {
     setIsFillingReviewed(true);
@@ -184,6 +185,11 @@ export const SaveDetailView: React.FC = () => {
             <Text className="text-[11px] text-dim pt-1">
               Next resurface interval:{' '}
               <Text className="text-gold font-semibold">{nextDays} days</Text>
+            </Text>
+            <Text className="text-[11px] text-dim">
+              Ease factor:{' '}
+              <Text className="text-gold font-semibold">{easeFactor.toFixed(2)}</Text>
+              {'  ·  '}SM-2
             </Text>
           </View>
 

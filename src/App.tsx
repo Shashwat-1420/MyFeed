@@ -5,10 +5,12 @@ import { BackHandler, Platform, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useShareIntent } from 'expo-share-intent';
+import * as Notifications from 'expo-notifications';
 
 import { useSavedFeedStore } from './store/useSavedFeedStore';
 import { themeVars } from './lib/theme';
 import { useLocalModel } from './lib/localModel';
+import { syncResurfaceReminder } from './lib/notifications';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { SimulatedNotificationBanner } from './components/common/SimulatedNotificationBanner';
 
@@ -59,6 +61,27 @@ export const App: React.FC = () => {
   useEffect(() => {
     setLocalModelStatus(Boolean(localModel.isReady), localModelProgress);
   }, [localModel.isReady, localModelProgress, setLocalModelStatus]);
+
+  /*
+   * Anki-style reminders (Phase C #3): keep a single daily local notification in
+   * sync with the save list so its text reflects the current due count.
+   */
+  const saves = useSavedFeedStore((s) => s.saves);
+  const nudgeTime = useSavedFeedStore((s) => s.profile.daily_nudge_time);
+
+  useEffect(() => {
+    syncResurfaceReminder(saves, nudgeTime).catch(() => {
+      // notifications are best-effort; never block the UI on them
+    });
+  }, [saves, nudgeTime]);
+
+  // Tapping a reminder opens the app on Home.
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(() => {
+      useSavedFeedStore.getState().setTab('home');
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (!hasShareIntent) return;
