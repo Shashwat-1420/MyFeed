@@ -260,3 +260,24 @@ The Vite app was replaced by an Expo/RN app **in the same repo**:
 - **Icons:** `lucide-react-native` — pass `size`/`color`/`fill` props, not `className` (SVG props
   aren't reached by Tailwind). Use `useThemeColors()` for the colour.
 - **The source is the only truth.** The old planning docs were deleted — don't reintroduce them.
+
+---
+
+## 6. Known gaps & roadmap (internal — deliberately NOT in the public README)
+
+Stated plainly so we never overclaim to judges:
+
+- **Inference is CPU, not NPU.** `react-native-executorch` runs Qwen2.5-0.5B on **XNNPACK**. Qualcomm
+  Hexagon / MediaTek APU offload needs a vendor backend (QNN) plus a compatible export — a stretch,
+  not a deliverable. The loaner iQOO *is* Snapdragon, so a time-boxed spike there is worthwhile.
+- **Instagram and X previews don't work.** Both block non-browser fetches, so those shares fall back
+  to a slug-derived title + monochrome placeholder. YouTube / Reddit / GitHub / blogs / docs work.
+- **Search is keyword-based, not semantic.** On-device embeddings (ExecuTorch ships `useTextEmbedder`
+  with `all-MiniLM-L6-v2`) would make it semantic and replace the old pgvector plan.
+- **No camera or voice features.** The rubric's "creative phone use" (15%) rewards them; we only
+  claim the on-device-AI portion.
+- **Office Kit is unused** — 10% of the rubric is HackTracker phone↔laptop bridge time.
+- **No social layer.** Sharing saves with friends was in the original concept, never built.
+
+Roadmap, in value order: on-device embeddings for semantic search → SM-2 interval tuning per content
+type → per-platform deep links → social layer.
