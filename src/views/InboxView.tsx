@@ -109,6 +109,7 @@ export const InboxView: React.FC = () => {
           {CATEGORY_LIST.map((cat) => {
             const count = saves.filter((s) => !s.is_archived && s.category === cat.id).length;
             const isActive = categoryFilter === cat.id;
+            const Icon = cat.icon;
             return (
               <Pressable
                 key={cat.id}
@@ -116,7 +117,7 @@ export const InboxView: React.FC = () => {
                 style={chipStyle(isActive)}
                 className="px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1"
               >
-                <Text className="text-xs">{cat.emoji}</Text>
+                <Icon size={12} color={isActive ? '#000000' : c.gold} />
                 <Text
                   style={{ color: chipTextColor(isActive) }}
                   className="text-xs font-display font-bold uppercase tracking-wider"

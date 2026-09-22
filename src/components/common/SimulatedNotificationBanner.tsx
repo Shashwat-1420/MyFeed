@@ -38,7 +38,7 @@ export const SimulatedNotificationBanner: React.FC = () => {
               </Text>
             </View>
             <Text numberOfLines={1} className="text-xs font-medium text-ink">
-              📚 {notification.title}
+              {notification.title}
             </Text>
           </View>
         </View>

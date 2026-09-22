@@ -100,7 +100,7 @@ export const ProfileView: React.FC = () => {
               <Text className="text-[10px] text-muted uppercase font-display">Total Saves</Text>
             </View>
             <View className="flex-1 items-center border-x border-gold/20">
-              <Text className="text-base font-display font-bold text-[#10B981]">{reviewedSaves}</Text>
+              <Text className="text-base font-display font-bold text-gold">{reviewedSaves}</Text>
               <Text className="text-[10px] text-muted uppercase font-display">Reviewed</Text>
             </View>
             <View className="flex-1 items-center">
@@ -158,7 +158,7 @@ export const ProfileView: React.FC = () => {
                 <View className="flex-row items-center gap-2.5">
                   <BellRing size={16} color={c.gold} />
                   <Text className="font-medium text-ink text-xs">
-                    {isTestingReminder ? 'Reminder sent ✓' : 'Send Test Reminder'}
+                    {isTestingReminder ? 'Reminder sent' : 'Send Test Reminder'}
                   </Text>
                 </View>
                 <ChevronRight size={16} color={c.dim} />
@@ -209,7 +209,7 @@ export const ProfileView: React.FC = () => {
                 className="w-full flex-row items-center justify-between p-3.5 active:bg-chip"
               >
                 <View className="flex-row items-center gap-2.5">
-                  <Download size={16} color="#10B981" />
+                  <Download size={16} color={c.gold} />
                   <Text className="font-medium text-ink text-xs">
                     {isExporting ? 'Exporting JSON...' : 'Export My Saves (JSON)'}
                   </Text>
@@ -255,7 +255,7 @@ export const ProfileView: React.FC = () => {
           <View className="bg-chip border border-edge rounded-xl p-3 gap-1.5">
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Runtime:</Text>
-              <Text className="text-[11px] font-mono text-[#4ADE80]">executorch</Text>
+              <Text className="text-[11px] font-mono text-gold">executorch</Text>
             </View>
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Categorization Model:</Text>
@@ -264,7 +264,7 @@ export const ProfileView: React.FC = () => {
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Status:</Text>
               <Text
-                style={{ color: localModelReady ? '#4ADE80' : '#FBBF24' }}
+                style={{ color: localModelReady ? c.gold : c.muted }}
                 className="text-[11px] font-mono"
               >
                 {localModelReady ? 'ready · fully offline' : `downloading ${localModelProgress}%`}
@@ -272,7 +272,7 @@ export const ProfileView: React.FC = () => {
             </View>
             <View className="flex-row justify-between">
               <Text className="text-[11px] text-dim font-mono">Fallback:</Text>
-              <Text className="text-[11px] font-mono text-[#FBBF24]">keyword classifier</Text>
+              <Text className="text-[11px] font-mono text-muted">keyword classifier</Text>
             </View>
           </View>
           <Text className="text-[11px] text-dim">

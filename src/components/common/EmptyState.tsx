@@ -22,7 +22,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ type, onCtaClick }) => {
     home_all_reviewed: {
       Icon: Sparkles,
       iconColor: c.gold,
-      heading: "You're all caught up ✓",
+      heading: "You're all caught up",
       subtext: 'Great job! You have reviewed all your scheduled saves for today.',
       cta: undefined,
     },

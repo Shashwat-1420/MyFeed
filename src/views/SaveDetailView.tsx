@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Image, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { CategoryBadge } from '../components/common/CategoryBadge';
+import { SaveThumbnail } from '../components/common/SaveThumbnail';
 import { formatRelativeDaysAgo, getResurfaceIntervalDays } from '../lib/resurface';
 import { BottomSheetModal } from '../components/common/BottomSheetModal';
 import {
@@ -56,7 +57,7 @@ export const SaveDetailView: React.FC = () => {
     setIsFillingReviewed(true);
 
     try {
-      celebrate({ particleCount: 45, spread: 60, origin: { y: 0.8 }, colors: ['#4ADE80', '#FFC800'] });
+      celebrate({ particleCount: 45, spread: 60, origin: { y: 0.8 }, colors: ['#FFC800'] });
     } catch {
       // fallback
     }
@@ -72,11 +73,7 @@ export const SaveDetailView: React.FC = () => {
       <ScrollView className="flex-1" contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
         {/* Hero Header Image */}
         <View className="w-full h-[220px] relative bg-panel border-b border-gold/30">
-          <Image
-            source={{ uri: save.image_url || 'https://picsum.photos/seed/detail/600/400' }}
-            style={{ width: '100%', height: '100%' }}
-            resizeMode="cover"
-          />
+          <SaveThumbnail uri={save.image_url} label={save.domain} letterSize={56} />
           {/* flat scrim replaces the web gradient */}
           <View className="absolute inset-0 bg-black/40" />
 
@@ -197,7 +194,7 @@ export const SaveDetailView: React.FC = () => {
           <Pressable
             onPress={handleMarkReviewed}
             disabled={isFillingReviewed}
-            style={{ backgroundColor: isFillingReviewed ? '#10B981' : '#FFC800' }}
+            style={{ backgroundColor: isFillingReviewed ? 'rgba(255,200,0,0.65)' : '#FFC800' }}
             className="w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 shadow-glow-lg active:opacity-80"
           >
             {isFillingReviewed ? (

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Image,
   Pressable,
   ScrollView,
   Text,
@@ -12,6 +11,7 @@ import { fetchUrlMetadata, ScrapedMetadata } from '../lib/scraper';
 import { processSaveWithAI } from '../lib/aiAdapter';
 import { CategoryBadge } from '../components/common/CategoryBadge';
 import { SkeletonLoader } from '../components/common/SkeletonLoader';
+import { SaveThumbnail } from '../components/common/SaveThumbnail';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category, PlatformSource } from '../types/savedfeed';
 import { ArrowLeft, Sparkles, Link as LinkIcon, FileText, Check, Share2, Cpu } from 'lucide-react-native';
@@ -19,7 +19,7 @@ import { celebrate } from '../lib/confetti';
 import { useThemeColors } from '../lib/theme';
 
 export const NewSaveView: React.FC = () => {
-  const { setScreen, setTab, addSave, sharedUrlPayload, clearShareIntent } = useSavedFeedStore();
+  const { setScreen, setTab, addSave, sharedUrlPayload, sharedTitlePayload, clearShareIntent } = useSavedFeedStore();
   const c = useThemeColors();
 
   const [mode, setMode] = useState<'link' | 'note'>('link');
@@ -57,7 +57,7 @@ export const NewSaveView: React.FC = () => {
     setIsProcessingAi(true);
 
     try {
-      const meta = await fetchUrlMetadata(urlInput);
+      const meta = await fetchUrlMetadata(urlInput, sharedTitlePayload);
       setPreview(meta);
       setTitle(meta.title);
       setDescription(meta.description);
@@ -109,7 +109,7 @@ export const NewSaveView: React.FC = () => {
       setIsFlickingSuccess(true);
 
       try {
-        celebrate({ particleCount: 50, spread: 70, origin: { y: 0.6 }, colors: ['#FFC800', '#4ADE80', '#FBBF24'] });
+        celebrate({ particleCount: 50, spread: 70, origin: { y: 0.6 }, colors: ['#FFC800'] });
       } catch {
         // fallback
       }
@@ -264,11 +264,7 @@ export const NewSaveView: React.FC = () => {
             {preview && !isFetchingMetadata && (
               <View className="bg-panel border border-gold/30 rounded-card p-3.5 gap-3 shadow-card">
                 <View className="w-full h-[160px] rounded-xl overflow-hidden bg-canvas relative border border-gold/20">
-                  <Image
-                    source={{ uri: preview.image_url }}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode="cover"
-                  />
+                  <SaveThumbnail uri={preview.image_url} label={preview.domain} letterSize={28} />
                   <View className="absolute top-2 left-2">
                     {isProcessingAi ? (
                       <View className="bg-black/80 px-2 py-1 rounded-full flex-row items-center gap-1">
@@ -362,6 +358,7 @@ export const NewSaveView: React.FC = () => {
               <View className="flex-row flex-wrap gap-2">
                 {CATEGORY_LIST.map((cat) => {
                   const isActive = category === cat.id;
+                  const Icon = cat.icon;
                   return (
                     <Pressable
                       key={cat.id}
@@ -373,12 +370,15 @@ export const NewSaveView: React.FC = () => {
                       }
                       className="px-3 py-2 rounded-xl bg-panel"
                     >
-                      <Text
-                        style={{ color: isActive ? '#000000' : c.muted }}
-                        className="text-xs font-mono"
-                      >
-                        {cat.emoji} {cat.label}
-                      </Text>
+                      <View className="flex-row items-center gap-1.5">
+                        <Icon size={12} color={isActive ? '#000000' : c.gold} />
+                        <Text
+                          style={{ color: isActive ? '#000000' : c.muted }}
+                          className="text-xs font-mono"
+                        >
+                          {cat.label}
+                        </Text>
+                      </View>
                     </Pressable>
                   );
                 })}

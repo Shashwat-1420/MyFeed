@@ -47,21 +47,17 @@ export const CategoriesView: React.FC = () => {
           {CATEGORY_LIST.map((cat) => {
             const count = activeSaves.filter((s) => s.category === cat.id).length;
             const isEmpty = count === 0;
+            const Icon = cat.icon;
 
             return (
               <Pressable
                 key={cat.id}
                 onPress={() => handleCategoryClick(cat.id as Category)}
-                style={{
-                  backgroundColor: `${cat.color}15`,
-                  borderLeftColor: cat.color,
-                  width: '48%',
-                  opacity: isEmpty ? 0.5 : 1,
-                }}
+                style={{ width: '48%', opacity: isEmpty ? 0.5 : 1 }}
                 className="border-l-4 border-y border-r border-gold/20 rounded-card p-3.5 flex-col justify-between h-[110px] active:opacity-80 shadow-card"
               >
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-2xl">{cat.emoji}</Text>
+                  <Icon size={22} color={c.gold} />
                   <ChevronRight size={16} color={c.dim} />
                 </View>
 

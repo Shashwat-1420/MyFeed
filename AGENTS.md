@@ -109,9 +109,13 @@ The Vite app was replaced by an Expo/RN app **in the same repo**:
 
 1. **Share-to-app** — ✅ DONE. `expo-share-intent` wired via `useShareIntent()` in `App.tsx` into
    the `sharedUrlPayload` → `new_save` flow (URL de-duped with a cooldown, intent always
-   acknowledged). Verified on device: a YouTube/GitHub share opens "SHARED LINK RECEIVER" with the
-   platform detected and the preview populated. **Remaining (polish):** `fetchUrlMetadata` in
-   `src/lib/scraper.ts` is still the mock — replace with real og: scraping (RN `fetch` has no CORS).
+   acknowledged, and the sharing app's own `meta.title` passed through as a hint). **Real link
+   previews** replaced the old placeholder mock: `src/lib/scraper.ts` now does og:/twitter: card
+   scraping (RN `fetch` has no CORS), with **YouTube oEmbed** for accurate video titles +
+   thumbnails, and a slug-derived title fallback. Verified on device: a YouTube share produced the
+   real video title, channel and thumbnail.
+   - **Known limitation:** Instagram and X block non-browser fetches, so those fall back to the
+     slug title and a monochrome placeholder thumbnail. No client-side scraper can beat that.
 2. **On-device AI categorization** — ✅ DONE. `react-native-executorch` + **Qwen2.5-0.5B-Instruct
    (8da4w)** running on the **XNNPACK CPU backend**. See "On-device AI" below for the details,
    constraints and gotchas. Verified on device: a shared GitHub link was categorized *on-device*

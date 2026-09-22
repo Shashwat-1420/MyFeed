@@ -38,6 +38,8 @@ interface SavedFeedState {
   // Prototype Simulators
   notification: NotificationState | null;
   sharedUrlPayload: string | null;
+  /** Title supplied by the sharing app itself (expo-share-intent `meta.title`). */
+  sharedTitlePayload: string | null;
   isSavingLoader: boolean;
 
   // Actions
@@ -64,7 +66,7 @@ interface SavedFeedState {
   // Prototype Actions
   triggerSimulatedPush: () => void;
   dismissNotification: () => void;
-  simulateShareIntent: (url?: string) => void;
+  simulateShareIntent: (url?: string, title?: string) => void;
   clearShareIntent: () => void;
   resetMockData: () => void;
 }
@@ -100,6 +102,7 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
 
   notification: null,
   sharedUrlPayload: null,
+  sharedTitlePayload: null,
   isSavingLoader: false,
 
   setTab: (tab) => set({ currentTab: tab, currentScreen: 'tabs' }),
@@ -235,14 +238,15 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
 
   dismissNotification: () => set({ notification: null }),
 
-  simulateShareIntent: (url = 'https://instagram.com/p/C9x81Y_s9_savedfeed_demo') => {
+  simulateShareIntent: (url = 'https://instagram.com/p/C9x81Y_s9_savedfeed_demo', title) => {
     set({
       sharedUrlPayload: url,
+      sharedTitlePayload: title ?? null,
       currentScreen: 'new_save',
     });
   },
 
-  clearShareIntent: () => set({ sharedUrlPayload: null }),
+  clearShareIntent: () => set({ sharedUrlPayload: null, sharedTitlePayload: null }),
 
   resetMockData: () => set({ saves: MOCK_SAVES }),
 }));

@@ -95,7 +95,8 @@ export const App: React.FC = () => {
     if (isNewShare) {
       lastHandledShareUrl = incoming;
       lastHandledShareAt = now;
-      simulateShareIntent(incoming);
+      // The sharing app often already knows the page title — use it as a hint.
+      simulateShareIntent(incoming, shareIntentRef.current?.meta?.title);
     }
 
     // Always acknowledge the intent so `hasShareIntent` flips back to false and

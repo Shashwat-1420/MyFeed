@@ -64,7 +64,6 @@ export const THEME = {
     panel: '#12131C',
     chip: '#1A1C2B',
     danger: '#F87171',
-    success: '#10B981',
     black: '#000000',
   },
   light: {
@@ -78,7 +77,6 @@ export const THEME = {
     panel: '#FFFFFF',
     chip: '#EAEAE0',
     danger: '#DC2626',
-    success: '#059669',
     black: '#000000',
   },
 };

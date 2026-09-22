@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Image, Linking, Pressable, Text, View } from 'react-native';
+import { Linking, Pressable, Text, View } from 'react-native';
 import { SaveItem } from '../../types/savedfeed';
 import { CategoryBadge } from '../common/CategoryBadge';
+import { SaveThumbnail } from '../common/SaveThumbnail';
 import { formatRelativeDaysAgo } from '../../lib/resurface';
 import { useSavedFeedStore } from '../../store/useSavedFeedStore';
 import { BottomSheetModal } from '../common/BottomSheetModal';
-import { Star, Archive, Trash2, Globe, ExternalLink } from 'lucide-react-native';
+import { Star, Archive, Trash2, Globe, ExternalLink, Sparkles } from 'lucide-react-native';
 import { useThemeColors } from '../../lib/theme';
 
 interface SaveCardProps {
@@ -40,18 +41,15 @@ export const SaveCard: React.FC<SaveCardProps> = ({
         {/* Semantic search match indicator */}
         {semanticMatch && (
           <View className="flex-row items-center gap-1 mb-1">
-            <Text className="text-[10px] text-gold font-mono font-semibold">⚡ AI Semantic Match</Text>
+            <Sparkles size={10} color={c.gold} />
+            <Text className="text-[10px] text-gold font-mono font-semibold">AI Semantic Match</Text>
           </View>
         )}
 
         <View className="flex-row items-start gap-3">
           {/* Thumbnail */}
           <View className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-canvas shrink-0 border border-gold/20">
-            <Image
-              source={{ uri: save.image_url || 'https://picsum.photos/seed/save/200/200' }}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
-            />
+            <SaveThumbnail uri={save.image_url} label={save.domain} letterSize={22} />
           </View>
 
           {/* Right details column */}

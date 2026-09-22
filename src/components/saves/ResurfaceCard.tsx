@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SaveItem } from '../../types/savedfeed';
 import { CategoryBadge } from '../common/CategoryBadge';
+import { SaveThumbnail } from '../common/SaveThumbnail';
 import { formatRelativeDaysAgo } from '../../lib/resurface';
 import { useSavedFeedStore } from '../../store/useSavedFeedStore';
 import { Check, ArrowRight } from 'lucide-react-native';
@@ -22,7 +23,7 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
 
     // Celebration (no-op shim on native, see src/lib/confetti.ts)
     try {
-      celebrate({ particleCount: 40, spread: 60, origin: { y: 0.7 }, colors: ['#4ADE80', '#FFC800', '#FBBF24'] });
+      celebrate({ particleCount: 40, spread: 60, origin: { y: 0.7 }, colors: ['#FFC800'] });
     } catch {
       // fallback
     }
@@ -55,11 +56,7 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
     >
       {/* Top thumbnail 75px */}
       <View className="h-[75px] w-full relative bg-canvas overflow-hidden">
-        <Image
-          source={{ uri: save.image_url || 'https://picsum.photos/seed/resurface/400/200' }}
-          style={{ width: '100%', height: '100%' }}
-          resizeMode="cover"
-        />
+        <SaveThumbnail uri={save.image_url} label={save.domain} letterSize={22} />
         {/* gradient overlay replaced with a flat scrim (RN has no CSS gradients) */}
         <View className="absolute inset-0 bg-black/30" />
         <View className="absolute top-2 left-2">

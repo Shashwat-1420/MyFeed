@@ -45,8 +45,6 @@ export interface SaveItem {
 export interface CategoryInfo {
   id: Category;
   label: string;
-  emoji: string;
-  color: string;
   save_count: number;
 }
 

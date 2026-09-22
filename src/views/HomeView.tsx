@@ -6,7 +6,7 @@ import { SaveCard } from '../components/saves/SaveCard';
 import { AdBanner } from '../components/common/AdBanner';
 import { EmptyState } from '../components/common/EmptyState';
 import { isDueForResurface } from '../lib/resurface';
-import { Flame, Clock, Sparkles } from 'lucide-react-native';
+import { Flame, Clock, Sparkles, Zap } from 'lucide-react-native';
 import { useThemeColors } from '../lib/theme';
 
 export const HomeView: React.FC = () => {
@@ -39,7 +39,7 @@ export const HomeView: React.FC = () => {
       <View className="w-full mb-4 p-3 rounded-2xl bg-panel border border-gold/40 flex-row items-center justify-between shadow-glow">
         <View className="flex-row items-center gap-2.5 flex-1">
           <View className="w-8 h-8 rounded-xl bg-gold-fill items-center justify-center">
-            <Text className="text-black font-display font-bold text-sm">⚡</Text>
+            <Zap size={16} color="#000000" strokeWidth={2.5} />
           </View>
           <View className="flex-1">
             <View className="flex-row items-center gap-1.5">
@@ -61,7 +61,7 @@ export const HomeView: React.FC = () => {
       <View className="flex-row items-center justify-between mb-5 pt-1">
         <View className="flex-1">
           <Text className="text-xl font-bold text-ink font-display tracking-wide">
-            {getGreeting()}, {profile.display_name || 'Arjun'} ⚡
+            {getGreeting()}, {profile.display_name || 'Arjun'}
           </Text>
           <Text className="text-xs text-muted font-medium">{formattedDate}</Text>
         </View>
@@ -107,7 +107,7 @@ export const HomeView: React.FC = () => {
           ) : (
             <View className="flex-row items-center gap-1">
               <Sparkles size={12} color={c.gold} />
-              <Text className="text-xs font-semibold text-[#10B981]">All clear</Text>
+              <Text className="text-xs font-semibold text-gold">All clear</Text>
             </View>
           )}
         </View>

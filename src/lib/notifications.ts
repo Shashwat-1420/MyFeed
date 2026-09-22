@@ -75,7 +75,7 @@ export async function syncResurfaceReminder(
   await Notifications.scheduleNotificationAsync({
     identifier: DAILY_REMINDER_ID,
     content: {
-      title: 'Time to resurface 📚',
+      title: 'Time to resurface',
       body:
         due > 0
           ? `${due} saved ${due === 1 ? 'item is' : 'items are'} ready for review.`
@@ -98,7 +98,7 @@ export async function sendTestReminder(): Promise<boolean> {
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'Time to resurface 📚',
+      title: 'Time to resurface',
       body: 'This is how your spaced-repetition nudge will look.',
       data: { tab: 'home' },
     },
