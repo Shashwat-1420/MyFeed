@@ -1,113 +1,117 @@
 import React, { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
-import { Bookmark, Inbox, Bell, ArrowRight } from 'lucide-react';
+import { Bookmark, Inbox, Bell, ArrowRight } from 'lucide-react-native';
+import { useThemeColors } from '../lib/theme';
 
+/*
+ * NOTE: the web slide icons used `bg-gradient-to-tr`. React Native has no CSS
+ * gradients, so each tile keeps its tint via a translucent colour overlay
+ * instead (visually close, zero extra dependencies).
+ */
 export const OnboardingView: React.FC = () => {
   const { setScreen } = useSavedFeedStore();
   const [activeSlide, setActiveSlide] = useState(0);
+  const c = useThemeColors();
 
   const slides = [
     {
-      icon: (
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#F0B31C]/20 to-[#FFCB14]/20 border border-[#F0B31C]/30 flex items-center justify-center text-gold shadow-glow">
-          <Bookmark className="w-12 h-12" />
-        </div>
-      ),
+      Icon: Bookmark,
+      tint: '#FFC800',
+      iconColor: c.gold,
       heading: 'You save everything.',
       subtext: 'Articles, courses, tutorials, reels. All of it — going nowhere in your bookmarks.',
     },
     {
-      icon: (
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#3B82F6]/20 to-[#8B5CF6]/20 border border-[#3B82F6]/30 flex items-center justify-center text-[#3B82F6] shadow-glow">
-          <Inbox className="w-12 h-12" />
-        </div>
-      ),
+      Icon: Inbox,
+      tint: '#3B82F6',
+      iconColor: '#3B82F6',
       heading: 'SavedFeed collects them all.',
       subtext: 'One clean inbox for every link you save from Instagram, YouTube, Reddit, or the Web.',
     },
     {
-      icon: (
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#4ADE80]/20 to-[#F0B31C]/20 border border-[#4ADE80]/30 flex items-center justify-center text-[#4ADE80] shadow-glow">
-          <Bell className="w-12 h-12" />
-        </div>
-      ),
+      Icon: Bell,
+      tint: '#4ADE80',
+      iconColor: '#4ADE80',
       heading: 'We bring them back at the right time.',
       subtext: 'Smart spaced repetition nudges so you actually learn and retain what you save.',
     },
   ];
 
+  const slide = slides[activeSlide];
+  const { Icon, tint, iconColor } = slide;
+
   return (
-    <div className="flex-1 flex flex-col justify-between p-6 bg-canvas text-ink animate-fadeIn">
+    <View className="flex-1 flex-col justify-between p-6 bg-canvas">
       {/* Top brand header */}
-      <div className="flex items-center justify-between pt-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-lg bg-[#F0B31C] flex items-center justify-center text-black font-bold text-xs">
-            SF
-          </div>
-          <span className="font-bold text-sm tracking-tight text-ink">SavedFeed</span>
-        </div>
-        <button
-          onClick={() => setScreen('signup')}
-          className="text-xs text-muted hover:text-ink transition-colors"
-        >
-          Skip
-        </button>
-      </div>
+      <View className="flex-row items-center justify-between pt-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-7 h-7 rounded-lg bg-gold-fill items-center justify-center">
+            <Text className="text-black font-bold text-xs">SF</Text>
+          </View>
+          <Text className="font-bold text-sm tracking-tight text-ink">SavedFeed</Text>
+        </View>
+        <Pressable onPress={() => setScreen('signup')} className="active:opacity-70">
+          <Text className="text-xs text-muted">Skip</Text>
+        </Pressable>
+      </View>
 
       {/* Slide content carousel */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-        <div className="mb-8 animate-bounceIn">{slides[activeSlide].icon}</div>
-        <h1 className="text-2xl font-bold text-ink mb-3 leading-tight max-w-[280px]">
-          {slides[activeSlide].heading}
-        </h1>
-        <p className="text-xs text-muted max-w-[290px] leading-relaxed">
-          {slides[activeSlide].subtext}
-        </p>
-      </div>
+      <View className="flex-1 flex-col items-center justify-center px-4">
+        <View
+          style={{ backgroundColor: `${tint}20`, borderColor: `${tint}50` }}
+          className="w-24 h-24 rounded-3xl border items-center justify-center mb-8 shadow-glow"
+        >
+          <Icon size={48} color={iconColor} />
+        </View>
+        <Text className="text-2xl font-bold text-ink mb-3 leading-tight max-w-[280px] text-center">
+          {slide.heading}
+        </Text>
+        <Text className="text-xs text-muted max-w-[290px] leading-relaxed text-center">
+          {slide.subtext}
+        </Text>
+      </View>
 
       {/* Bottom controls */}
-      <div className="pb-6 space-y-6">
+      <View className="pb-6 gap-6">
         {/* Progress dots */}
-        <div className="flex items-center justify-center space-x-2">
+        <View className="flex-row items-center justify-center gap-2">
           {slides.map((_, idx) => (
-            <button
+            <Pressable
               key={idx}
-              onClick={() => setActiveSlide(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                activeSlide === idx ? 'w-8 bg-[#F0B31C]' : 'w-2 bg-edge'
-              }`}
+              onPress={() => setActiveSlide(idx)}
+              className={`h-2 rounded-full ${activeSlide === idx ? 'w-8 bg-gold-fill' : 'w-2 bg-edge'}`}
             />
           ))}
-        </div>
+        </View>
 
         {/* CTA Button */}
         {activeSlide === 2 ? (
-          <button
-            onClick={() => setScreen('signup')}
-            className="w-full h-[52px] bg-[#F0B31C] hover:bg-[#FFCB14] text-black font-semibold text-sm rounded-xl flex items-center justify-center space-x-2 shadow-glow transition-all active:scale-95"
+          <Pressable
+            onPress={() => setScreen('signup')}
+            className="w-full h-[52px] bg-gold-fill rounded-xl flex-row items-center justify-center gap-2 shadow-glow active:opacity-80"
           >
-            <span>Get Started</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            <Text className="text-black font-semibold text-sm">Get Started</Text>
+            <ArrowRight size={16} color="#000000" />
+          </Pressable>
         ) : (
-          <button
-            onClick={() => setActiveSlide((prev) => prev + 1)}
-            className="w-full h-[52px] bg-chip hover:bg-chip border border-edge text-ink font-semibold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95"
+          <Pressable
+            onPress={() => setActiveSlide((prev) => prev + 1)}
+            className="w-full h-[52px] bg-chip border border-edge rounded-xl flex-row items-center justify-center gap-2 active:opacity-80"
           >
-            <span>Next</span>
-            <ArrowRight className="w-4 h-4 text-muted" />
-          </button>
+            <Text className="text-ink font-semibold text-sm">Next</Text>
+            <ArrowRight size={16} color={c.muted} />
+          </Pressable>
         )}
 
-        <div className="text-center">
-          <button
-            onClick={() => setScreen('signup')}
-            className="text-xs text-muted hover:text-gold transition-colors"
-          >
-            Already have an account? <span className="text-gold font-semibold">Log in</span>
-          </button>
-        </div>
-      </div>
-    </div>
+        <View className="items-center">
+          <Pressable onPress={() => setScreen('signup')} className="active:opacity-70">
+            <Text className="text-xs text-muted">
+              Already have an account? <Text className="text-gold font-semibold">Log in</Text>
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
   );
 };

@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { SaveCard } from '../components/saves/SaveCard';
-import { CategoryBadge } from '../components/common/CategoryBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { AdBanner } from '../components/common/AdBanner';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category } from '../types/savedfeed';
-import { Search, RefreshCw, Star, Filter } from 'lucide-react';
+import { Search, RefreshCw, Star } from 'lucide-react-native';
+import { useThemeColors } from '../lib/theme';
 
 export const InboxView: React.FC = () => {
   const { saves, categoryFilter, setCategoryFilter, setTab, setScreen } = useSavedFeedStore();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const c = useThemeColors();
 
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 800);
   };
 
-  // Filter saves based on active chip
   const filteredSaves = saves.filter((s) => {
     if (s.is_archived) return false;
     if (categoryFilter === 'all') return true;
@@ -26,89 +27,128 @@ export const InboxView: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-canvas text-ink animate-fadeIn">
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between mb-3 pt-1">
-        <h1 className="text-xl font-display font-bold uppercase tracking-wider text-gold">Inbox</h1>
-        <button
-          onClick={handleRefresh}
-          className={`p-2 rounded-xl bg-panel border border-[#F0B31C]/30 text-muted hover:text-gold transition-all ${
-            isRefreshing ? 'animate-spin text-gold' : ''
-          }`}
-          title="Pull to refresh"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Search trigger bar */}
-      <div
-        onClick={() => setTab('search')}
-        className="w-full h-11 bg-panel border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-xl px-3.5 flex items-center space-x-2.5 text-xs text-muted cursor-pointer mb-3 transition-all shadow-sm"
+    <View className="flex-1 bg-canvas">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="p-4 pb-8"
+        showsVerticalScrollIndicator={false}
       >
-        <Search className="w-4 h-4 text-gold" />
-        <span>Search your saves...</span>
-      </div>
+        {/* Top Header Bar */}
+        <View className="flex-row items-center justify-between mb-3 pt-1">
+          <Text className="text-xl font-display font-bold uppercase tracking-wider text-gold">
+            Inbox
+          </Text>
+          <Pressable
+            onPress={handleRefresh}
+            className="p-2 rounded-xl bg-panel border border-gold/30 active:opacity-70"
+          >
+            <RefreshCw size={16} color={isRefreshing ? c.gold : c.muted} />
+          </Pressable>
+        </View>
 
-      {/* Category filter chips */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-3 mb-2 no-scrollbar">
-        {/* All chip */}
-        <button
-          onClick={() => setCategoryFilter('all')}
-          className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 transition-all ${
-            categoryFilter === 'all'
-              ? 'bg-[#F0B31C] text-black shadow-glow'
-              : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
-          }`}
+        {/* Search trigger bar */}
+        <Pressable
+          onPress={() => setTab('search')}
+          className="w-full h-11 bg-panel border border-gold/30 rounded-xl px-3.5 flex-row items-center gap-2.5 mb-3 active:opacity-80"
         >
-          All ({saves.filter((s) => !s.is_archived).length})
-        </button>
+          <Search size={16} color={c.gold} />
+          <Text className="text-xs text-muted">Search your saves...</Text>
+        </Pressable>
 
-        {/* Favourites chip */}
-        <button
-          onClick={() => setCategoryFilter('favourites')}
-          className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
-            categoryFilter === 'favourites'
-              ? 'bg-[#FFCB14] text-black shadow-glow'
-              : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
-          }`}
+        {/* Category filter chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="gap-2 pb-3 mb-2"
         >
-          <Star className="w-3 h-3 fill-current" />
-          <span>Favourites</span>
-        </button>
-
-        {/* 14 Category chips */}
-        {CATEGORY_LIST.map((cat) => {
-          const count = saves.filter((s) => !s.is_archived && s.category === cat.id).length;
-          const isActive = categoryFilter === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setCategoryFilter(cat.id as Category)}
-              className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
-                isActive
-                  ? 'bg-[#F0B31C] text-black shadow-glow'
-                  : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
+          {/* All chip */}
+          <Pressable
+            onPress={() => setCategoryFilter('all')}
+            className={`px-3 py-1.5 rounded-full shrink-0 ${
+              categoryFilter === 'all'
+                ? 'bg-gold-fill shadow-glow'
+                : 'bg-panel border border-gold/30'
+            }`}
+          >
+            <Text
+              className={`text-xs font-display font-bold uppercase tracking-wider ${
+                categoryFilter === 'all' ? 'text-black' : 'text-muted'
               }`}
             >
-              <span>{cat.emoji}</span>
-              <span>{cat.label}</span>
-              {count > 0 && <span className="text-[10px] opacity-75 font-mono">({count})</span>}
-            </button>
-          );
-        })}
-      </div>
+              All ({saves.filter((s) => !s.is_archived).length})
+            </Text>
+          </Pressable>
 
-      {/* Save Cards List */}
-      <div className="flex-1 space-y-3 min-h-[300px]">
+          {/* Favourites chip */}
+          <Pressable
+            onPress={() => setCategoryFilter('favourites')}
+            className={`px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1 ${
+              categoryFilter === 'favourites'
+                ? 'bg-gold-fill shadow-glow'
+                : 'bg-panel border border-gold/30'
+            }`}
+          >
+            <Star
+              size={12}
+              color={categoryFilter === 'favourites' ? '#000000' : c.muted}
+              fill={categoryFilter === 'favourites' ? '#000000' : 'none'}
+            />
+            <Text
+              className={`text-xs font-display font-bold uppercase tracking-wider ${
+                categoryFilter === 'favourites' ? 'text-black' : 'text-muted'
+              }`}
+            >
+              Favourites
+            </Text>
+          </Pressable>
+
+          {/* Category chips */}
+          {CATEGORY_LIST.map((cat) => {
+            const count = saves.filter((s) => !s.is_archived && s.category === cat.id).length;
+            const isActive = categoryFilter === cat.id;
+            return (
+              <Pressable
+                key={cat.id}
+                onPress={() => setCategoryFilter(cat.id as Category)}
+                className={`px-3 py-1.5 rounded-full shrink-0 flex-row items-center gap-1 ${
+                  isActive ? 'bg-gold-fill shadow-glow' : 'bg-panel border border-gold/30'
+                }`}
+              >
+                <Text className="text-xs">{cat.emoji}</Text>
+                <Text
+                  className={`text-xs font-display font-bold uppercase tracking-wider ${
+                    isActive ? 'text-black' : 'text-muted'
+                  }`}
+                >
+                  {cat.label}
+                </Text>
+                {count > 0 && (
+                  <Text
+                    className={`text-[10px] font-mono ${
+                      isActive ? 'text-black' : 'text-muted'
+                    }`}
+                  >
+                    ({count})
+                  </Text>
+                )}
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Save Cards List */}
         {filteredSaves.length > 0 ? (
-          filteredSaves.map((item) => <SaveCard key={item.id} save={item} />)
+          <View className="gap-3">
+            {filteredSaves.map((item) => (
+              <SaveCard key={item.id} save={item} />
+            ))}
+          </View>
         ) : (
           <EmptyState type="inbox_empty" onCtaClick={() => setScreen('new_save')} />
         )}
-      </div>
 
-      <AdBanner />
-    </div>
+        <AdBanner />
+      </ScrollView>
+    </View>
   );
 };

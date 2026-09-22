@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { fetchUrlMetadata, ScrapedMetadata } from '../lib/scraper';
 import { processSaveWithAI } from '../lib/aiAdapter';
@@ -6,11 +14,13 @@ import { CategoryBadge } from '../components/common/CategoryBadge';
 import { SkeletonLoader } from '../components/common/SkeletonLoader';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category, PlatformSource } from '../types/savedfeed';
-import { ArrowLeft, Sparkles, Link as LinkIcon, FileText, Check, Globe, Instagram, Youtube, Share2 } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { ArrowLeft, Sparkles, Link as LinkIcon, FileText, Check, Share2 } from 'lucide-react-native';
+import { celebrate } from '../lib/confetti';
+import { useThemeColors } from '../lib/theme';
 
 export const NewSaveView: React.FC = () => {
   const { setScreen, setTab, addSave, sharedUrlPayload, clearShareIntent } = useSavedFeedStore();
+  const c = useThemeColors();
 
   const [mode, setMode] = useState<'link' | 'note'>('link');
   const [urlInput, setUrlInput] = useState(sharedUrlPayload || '');
@@ -74,6 +84,7 @@ export const NewSaveView: React.FC = () => {
     if (sharedUrlPayload) {
       handleFetchPreview();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sharedUrlPayload]);
 
   // Handle Save Submission
@@ -96,12 +107,7 @@ export const NewSaveView: React.FC = () => {
       setIsFlickingSuccess(true);
 
       try {
-        confetti({
-          particleCount: 50,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#F0B31C', '#4ADE80', '#FBBF24'],
-        });
+        celebrate({ particleCount: 50, spread: 70, origin: { y: 0.6 }, colors: ['#FFC800', '#4ADE80', '#FBBF24'] });
       } catch {
         // fallback
       }
@@ -113,244 +119,312 @@ export const NewSaveView: React.FC = () => {
     }, 500);
   };
 
+  const canSave = (mode === 'link' && !!title) || (mode === 'note' && !!noteContent);
+
   return (
-    <div
-      className={`flex-1 flex flex-col p-4 bg-canvas text-ink animate-fadeIn ${
-        isFlickingSuccess ? 'animate-flick-up' : ''
-      }`}
+    <ScrollView
+      className={`flex-1 bg-canvas ${isFlickingSuccess ? 'opacity-0' : ''}`}
+      contentContainerClassName="p-4 pb-10"
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
     >
       {/* Top Bar */}
-      <div className="flex items-center justify-between mb-4 pt-1">
-        <button
-          onClick={() => {
+      <View className="flex-row items-center justify-between mb-4 pt-1">
+        <Pressable
+          onPress={() => {
             clearShareIntent();
             setTab('inbox');
           }}
-          className="flex items-center space-x-1 text-xs text-muted hover:text-gold transition-colors"
+          className="flex-row items-center gap-1 active:opacity-70"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </button>
-        <span className="text-sm font-display font-bold uppercase tracking-wider text-gold">
+          <ArrowLeft size={16} color={c.muted} />
+          <Text className="text-xs text-muted">Back</Text>
+        </Pressable>
+        <Text className="text-sm font-display font-bold uppercase tracking-wider text-gold">
           {sharedUrlPayload ? 'Shared Link Receiver' : 'New Save'}
-        </span>
-        <button
-          onClick={handleSave}
-          disabled={isSaving || (mode === 'link' && !title) || (mode === 'note' && !noteContent)}
-          className={`text-xs font-display font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all ${
-            (mode === 'link' && title) || (mode === 'note' && noteContent)
-              ? 'bg-[#F0B31C] text-black hover:bg-[#FFCB14] shadow-glow cursor-pointer'
-              : 'bg-panel text-dim cursor-not-allowed border border-[#F0B31C]/10'
+        </Text>
+        <Pressable
+          onPress={handleSave}
+          disabled={isSaving || !canSave}
+          className={`px-3.5 py-1.5 rounded-full ${
+            canSave ? 'bg-gold-fill shadow-glow' : 'bg-panel border border-gold/10'
           }`}
         >
-          {isSaving ? 'Saving...' : 'Save'}
-        </button>
-      </div>
+          <Text
+            className={`text-xs font-display font-bold uppercase tracking-wider ${
+              canSave ? 'text-black' : 'text-dim'
+            }`}
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+          </Text>
+        </Pressable>
+      </View>
 
       {/* Share Intent Banner if active */}
       {sharedUrlPayload && (
-        <div className="bg-[#F0B31C]/20 border border-[#F0B31C]/40 rounded-xl p-2.5 mb-3 flex items-center space-x-2 text-xs text-gold font-mono">
-          <Share2 className="w-4 h-4 shrink-0 text-gold" />
-          <span>Captured via Android Share Intent from social app</span>
-        </div>
+        <View className="bg-gold/20 border border-gold/40 rounded-xl p-2.5 mb-3 flex-row items-center gap-2">
+          <Share2 size={16} color={c.gold} />
+          <Text className="text-xs text-gold font-mono flex-1">
+            Captured via Android Share Intent from social app
+          </Text>
+        </View>
       )}
 
       {/* Mode toggle bar */}
-      <div className="grid grid-cols-2 bg-panel border border-[#F0B31C]/30 rounded-xl p-1 mb-4">
-        <button
-          onClick={() => setMode('link')}
-          className={`flex items-center justify-center space-x-1.5 py-2 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all ${
-            mode === 'link' ? 'bg-[#F0B31C] text-black shadow-glow' : 'text-muted hover:text-ink'
+      <View className="flex-row bg-panel border border-gold/30 rounded-xl p-1 mb-4">
+        <Pressable
+          onPress={() => setMode('link')}
+          className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${
+            mode === 'link' ? 'bg-gold-fill shadow-glow' : ''
           }`}
         >
-          <LinkIcon className="w-3.5 h-3.5" />
-          <span>Save Link</span>
-        </button>
-        <button
-          onClick={() => setMode('note')}
-          className={`flex items-center justify-center space-x-1.5 py-2 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all ${
-            mode === 'note' ? 'bg-[#F0B31C] text-black shadow-glow' : 'text-muted hover:text-ink'
+          <LinkIcon size={14} color={mode === 'link' ? '#000000' : c.muted} />
+          <Text
+            className={`text-xs font-display font-bold uppercase tracking-wider ${
+              mode === 'link' ? 'text-black' : 'text-muted'
+            }`}
+          >
+            Save Link
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setMode('note')}
+          className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${
+            mode === 'note' ? 'bg-gold-fill shadow-glow' : ''
           }`}
         >
-          <FileText className="w-3.5 h-3.5" />
-          <span>Quick Note</span>
-        </button>
-      </div>
+          <FileText size={14} color={mode === 'note' ? '#000000' : c.muted} />
+          <Text
+            className={`text-xs font-display font-bold uppercase tracking-wider ${
+              mode === 'note' ? 'text-black' : 'text-muted'
+            }`}
+          >
+            Quick Note
+          </Text>
+        </Pressable>
+      </View>
 
       {/* Mode content */}
-      <div className="flex-1 space-y-4">
+      <View className="gap-4">
         {mode === 'link' ? (
           <>
             {/* Input area */}
-            <div>
-              <label className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
+            <View>
+              <Text className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
                 Paste URL
-              </label>
-              <div className="relative">
-                <input
-                  type="url"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  placeholder="https://instagram.com/p/..."
-                  className="w-full bg-panel border border-[#F0B31C]/30 focus:border-[#F0B31C] focus:shadow-glow rounded-xl px-3.5 py-3 text-xs text-ink outline-none transition-all font-mono"
-                />
-              </div>
-            </div>
+              </Text>
+              <TextInput
+                value={urlInput}
+                onChangeText={setUrlInput}
+                placeholder="https://instagram.com/p/..."
+                placeholderTextColor={c.dim}
+                keyboardType="url"
+                autoCapitalize="none"
+                autoCorrect={false}
+                className="w-full bg-panel border border-gold/30 rounded-xl px-3.5 py-3 text-xs text-ink font-mono"
+              />
+            </View>
 
-            {/* Platform indicator icons */}
-            <div className="flex items-center space-x-2 text-xs text-dim">
-              <span className="text-[10px] font-mono">Detected:</span>
-              <span
-                className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+            {/* Platform indicator */}
+            <View className="flex-row items-center gap-2">
+              <Text className="text-[10px] font-mono text-dim">Detected:</Text>
+              <View
+                className={`px-2 py-0.5 rounded ${
                   detectedPlatform === 'instagram'
-                    ? 'bg-[#EC4899]/20 text-[#EC4899]'
+                    ? 'bg-[#EC4899]/20'
                     : detectedPlatform === 'youtube'
-                    ? 'bg-[#EF4444]/20 text-[#EF4444]'
+                    ? 'bg-[#EF4444]/20'
                     : detectedPlatform === 'reddit'
-                    ? 'bg-[#F97316]/20 text-[#F97316]'
+                    ? 'bg-[#F97316]/20'
                     : detectedPlatform === 'twitter'
-                    ? 'bg-[#3B82F6]/20 text-[#3B82F6]'
-                    : 'bg-panel text-gold border border-[#F0B31C]/30'
+                    ? 'bg-[#3B82F6]/20'
+                    : 'bg-panel border border-gold/30'
                 }`}
               >
-                {detectedPlatform}
-              </span>
-            </div>
+                <Text
+                  className="text-[10px] font-mono font-bold uppercase"
+                  style={{
+                    color:
+                      detectedPlatform === 'instagram'
+                        ? '#EC4899'
+                        : detectedPlatform === 'youtube'
+                        ? '#EF4444'
+                        : detectedPlatform === 'reddit'
+                        ? '#F97316'
+                        : detectedPlatform === 'twitter'
+                        ? '#3B82F6'
+                        : c.gold,
+                  }}
+                >
+                  {detectedPlatform}
+                </Text>
+              </View>
+            </View>
 
             {/* Fetch preview button */}
-            {urlInput && !preview && (
-              <button
-                onClick={handleFetchPreview}
+            {!!urlInput && !preview && (
+              <Pressable
+                onPress={handleFetchPreview}
                 disabled={isFetchingMetadata}
-                className="w-full py-2.5 rounded-xl border border-[#F0B31C] text-gold hover:bg-[#F0B31C]/20 text-xs font-display font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-all shadow-glow"
+                className="w-full py-2.5 rounded-xl border border-gold flex-row items-center justify-center gap-2 shadow-glow active:opacity-80"
               >
                 {isFetchingMetadata ? (
-                  <span>Fetching metadata & running AI...</span>
+                  <Text className="text-gold text-xs font-display font-bold uppercase tracking-wider">
+                    Fetching metadata & running AI...
+                  </Text>
                 ) : (
                   <>
-                    <span>Fetch Preview & Categorize</span>
-                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    <Text className="text-gold text-xs font-display font-bold uppercase tracking-wider">
+                      Fetch Preview & Categorize
+                    </Text>
+                    <Sparkles size={14} color={c.gold} />
                   </>
                 )}
-              </button>
+              </Pressable>
             )}
 
             {/* Shimmer loader while fetching */}
             {isFetchingMetadata && (
-              <div className="space-y-3 pt-2">
-                <SkeletonLoader height="160px" borderRadius="16px" />
-                <SkeletonLoader height="20px" width="80%" />
-                <SkeletonLoader height="14px" width="50%" />
-              </div>
+              <View className="gap-3 pt-2">
+                <SkeletonLoader height={160} borderRadius={16} />
+                <SkeletonLoader height={20} width="80%" />
+                <SkeletonLoader height={14} width="50%" />
+              </View>
             )}
 
             {/* Preview card after fetch */}
             {preview && !isFetchingMetadata && (
-              <div className="bg-panel border border-[#F0B31C]/30 rounded-card p-3.5 space-y-3 animate-fadeIn shadow-card">
-                <div className="w-full h-[160px] rounded-xl overflow-hidden bg-canvas relative border border-[#F0B31C]/20">
-                  <img src={preview.image_url} alt="Preview" className="w-full h-full object-cover" />
-                  <div className="absolute top-2 left-2">
+              <View className="bg-panel border border-gold/30 rounded-card p-3.5 gap-3 shadow-card">
+                <View className="w-full h-[160px] rounded-xl overflow-hidden bg-canvas relative border border-gold/20">
+                  <Image
+                    source={{ uri: preview.image_url }}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode="cover"
+                  />
+                  <View className="absolute top-2 left-2">
                     {isProcessingAi ? (
-                      <span className="text-[10px] bg-black/80 text-gold px-2 py-1 rounded-full backdrop-blur-md flex items-center gap-1 font-mono">
-                        <Sparkles className="w-3 h-3 text-gold animate-spin" /> Analysing...
-                      </span>
+                      <View className="bg-black/80 px-2 py-1 rounded-full flex-row items-center gap-1">
+                        <Sparkles size={12} color={c.gold} />
+                        <Text className="text-[10px] text-gold font-mono">Analysing...</Text>
+                      </View>
                     ) : (
                       <CategoryBadge category={category} size="sm" />
                     )}
-                  </div>
-                </div>
+                  </View>
+                </View>
 
-                <div>
-                  <label className="text-[10px] text-muted font-mono font-semibold uppercase">Title (Tap to edit)</label>
-                  <input
-                    type="text"
+                <View>
+                  <Text className="text-[10px] text-muted font-mono font-semibold uppercase">
+                    Title (Tap to edit)
+                  </Text>
+                  <TextInput
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-transparent text-sm font-semibold text-ink border-b border-[#F0B31C]/30 focus:border-[#F0B31C] outline-none pt-0.5"
+                    onChangeText={setTitle}
+                    className="w-full text-sm font-semibold text-ink border-b border-gold/30 py-1"
                   />
-                </div>
+                </View>
 
-                <div>
-                  <label className="text-[10px] text-muted font-mono font-semibold uppercase">Description</label>
-                  <textarea
+                <View>
+                  <Text className="text-[10px] text-muted font-mono font-semibold uppercase">
+                    Description
+                  </Text>
+                  <TextInput
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={2}
-                    className="w-full bg-transparent text-xs text-muted border-b border-[#F0B31C]/30 focus:border-[#F0B31C] outline-none resize-none pt-0.5"
+                    onChangeText={setDescription}
+                    multiline
+                    numberOfLines={2}
+                    className="w-full text-xs text-muted border-b border-gold/30 py-1"
                   />
-                </div>
+                </View>
 
                 {/* AI Tags */}
-                <div>
-                  <label className="text-[10px] text-gold font-mono font-semibold uppercase block mb-1">
+                <View>
+                  <Text className="text-[10px] text-gold font-mono font-semibold uppercase mb-1">
                     AI Auto-Tags
-                  </label>
-                  <div className="flex flex-wrap gap-1.5">
+                  </Text>
+                  <View className="flex-row flex-wrap gap-1.5">
                     {tags.map((tag, idx) => (
-                      <span key={idx} className="text-[11px] bg-canvas text-gold border border-[#F0B31C]/30 px-2 py-0.5 rounded-md font-mono">
-                        #{tag}
-                      </span>
+                      <View
+                        key={idx}
+                        className="bg-canvas border border-gold/30 px-2 py-0.5 rounded-md"
+                      >
+                        <Text className="text-[11px] text-gold font-mono">#{tag}</Text>
+                      </View>
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </View>
+                </View>
+              </View>
             )}
           </>
         ) : (
           /* Manual Note Mode */
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
+          <View className="gap-4">
+            <View>
+              <Text className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
                 Note Content
-              </label>
-              <textarea
+              </Text>
+              <TextInput
                 value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
+                onChangeText={setNoteContent}
                 placeholder="Type your notes, ideas, or quick thoughts..."
-                rows={5}
-                className="w-full bg-panel border border-[#F0B31C]/30 focus:border-[#F0B31C] rounded-xl p-3 text-xs text-ink outline-none resize-none"
+                placeholderTextColor={c.dim}
+                multiline
+                numberOfLines={5}
+                className="w-full bg-panel border border-gold/30 rounded-xl p-3 text-xs text-ink min-h-[120px]"
               />
-            </div>
+            </View>
 
-            <div>
-              <label className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
+            <View>
+              <Text className="block text-[11px] font-display font-bold uppercase tracking-widest text-gold mb-1.5">
                 Select Category
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as Category)}
-                className="w-full bg-panel border border-[#F0B31C]/30 text-xs text-ink rounded-xl p-3 outline-none font-mono"
-              >
-                {CATEGORY_LIST.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.emoji} {cat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+              </Text>
+              {/* RN has no <select> → inline chip picker */}
+              <View className="flex-row flex-wrap gap-2">
+                {CATEGORY_LIST.map((cat) => {
+                  const isActive = category === cat.id;
+                  return (
+                    <Pressable
+                      key={cat.id}
+                      onPress={() => setCategory(cat.id as Category)}
+                      className={`px-3 py-2 rounded-xl border ${
+                        isActive ? 'bg-gold-fill border-gold' : 'bg-panel border-gold/30'
+                      }`}
+                    >
+                      <Text
+                        className={`text-xs font-mono ${isActive ? 'text-black' : 'text-muted'}`}
+                      >
+                        {cat.emoji} {cat.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
         )}
-      </div>
+      </View>
 
       {/* Full width save action button */}
-      <button
-        onClick={handleSave}
-        disabled={isSaving || (mode === 'link' && !title) || (mode === 'note' && !noteContent)}
-        className={`w-full h-[52px] font-display font-bold uppercase tracking-wider text-xs rounded-xl flex items-center justify-center space-x-2 transition-all mt-4 ${
-          (mode === 'link' && title) || (mode === 'note' && noteContent)
-            ? 'bg-[#F0B31C] hover:bg-[#FFCB14] text-black shadow-glow-lg active:scale-95 cursor-pointer'
-            : 'bg-panel text-dim border border-[#F0B31C]/20 cursor-not-allowed'
+      <Pressable
+        onPress={handleSave}
+        disabled={isSaving || !canSave}
+        className={`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 mt-4 ${
+          canSave ? 'bg-gold-fill shadow-glow-lg active:opacity-80' : 'bg-panel border border-gold/20'
         }`}
       >
         {isSaving ? (
-          <span>Saving to MyFeed...</span>
+          <Text className={`text-xs font-display font-bold uppercase tracking-wider ${canSave ? 'text-black' : 'text-dim'}`}>
+            Saving to MyFeed...
+          </Text>
         ) : (
           <>
-            <span>Save to MyFeed</span>
-            <Check className="w-4 h-4 stroke-[3]" />
+            <Text className={`text-xs font-display font-bold uppercase tracking-wider ${canSave ? 'text-black' : 'text-dim'}`}>
+              Save to MyFeed
+            </Text>
+            <Check size={16} color={canSave ? '#000000' : c.dim} strokeWidth={3} />
           </>
         )}
-      </button>
-    </div>
+      </Pressable>
+    </ScrollView>
   );
 };

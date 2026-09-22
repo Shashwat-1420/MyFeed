@@ -1,11 +1,14 @@
 import React from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category } from '../types/savedfeed';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react-native';
+import { useThemeColors } from '../lib/theme';
 
 export const CategoriesView: React.FC = () => {
   const { saves, setCategoryFilter, setTab } = useSavedFeedStore();
+  const c = useThemeColors();
 
   const activeSaves = saves.filter((s) => !s.is_archived);
   const activeCategoriesCount = CATEGORY_LIST.filter(
@@ -18,51 +21,67 @@ export const CategoriesView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-canvas text-ink animate-fadeIn">
-      {/* Header */}
-      <div className="mb-4 pt-1">
-        <h1 className="text-xl font-display font-bold uppercase tracking-wide text-gold flex items-center gap-2">
-          <span>Categories</span>
-          <span className="text-xs font-mono text-muted font-normal lowercase bg-chip px-2 py-0.5 rounded border border-[#F0B31C]/30">City Battles</span>
-        </h1>
-        <p className="text-xs text-muted">
-          {activeSaves.length} saves across {activeCategoriesCount} active categories
-        </p>
-      </div>
+    <View className="flex-1 bg-canvas">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="p-4 pb-8"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View className="mb-4 pt-1">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xl font-display font-bold uppercase tracking-wide text-gold">
+              Categories
+            </Text>
+            <View className="bg-chip px-2 py-0.5 rounded border border-gold/30">
+              <Text className="text-xs font-mono text-muted lowercase">City Battles</Text>
+            </View>
+          </View>
+          <Text className="text-xs text-muted">
+            {activeSaves.length} saves across {activeCategoriesCount} active categories
+          </Text>
+        </View>
 
-      {/* 2-Column Grid */}
-      <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto pb-4 no-scrollbar">
-        {CATEGORY_LIST.map((cat) => {
-          const count = activeSaves.filter((s) => s.category === cat.id).length;
-          const isEmpty = count === 0;
+        {/* 2-Column Grid (RN has no CSS grid → flex-wrap) */}
+        <View className="flex-row flex-wrap gap-3">
+          {CATEGORY_LIST.map((cat) => {
+            const count = activeSaves.filter((s) => s.category === cat.id).length;
+            const isEmpty = count === 0;
 
-          return (
-            <div
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat.id as Category)}
-              style={{
-                backgroundColor: `${cat.color}15`,
-                borderLeftColor: cat.color,
-              }}
-              className={`border-l-4 border-y border-r border-[#F0B31C]/20 rounded-card p-3.5 flex flex-col justify-between h-[110px] cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-card group ${
-                isEmpty ? 'opacity-50 hover:opacity-75' : 'hover:border-[#F0B31C]/50 hover:shadow-glow'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-2xl group-hover:scale-110 transition-transform">{cat.emoji}</span>
-                <ChevronRight className="w-4 h-4 text-dim group-hover:text-gold transition-colors" />
-              </div>
+            return (
+              <Pressable
+                key={cat.id}
+                onPress={() => handleCategoryClick(cat.id as Category)}
+                style={{
+                  backgroundColor: `${cat.color}15`,
+                  borderLeftColor: cat.color,
+                  width: '48%',
+                }}
+                className={`border-l-4 border-y border-r border-gold/20 rounded-card p-3.5 flex-col justify-between h-[110px] active:opacity-80 shadow-card ${
+                  isEmpty ? 'opacity-50' : ''
+                }`}
+              >
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-2xl">{cat.emoji}</Text>
+                  <ChevronRight size={16} color={c.dim} />
+                </View>
 
-              <div>
-                <h3 className="text-xs font-display font-bold uppercase tracking-wider text-ink truncate">{cat.label}</h3>
-                <span className="text-[11px] text-muted font-mono">
-                  {count > 0 ? `${count} save${count > 1 ? 's' : ''}` : 'No saves yet'}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+                <View>
+                  <Text
+                    numberOfLines={1}
+                    className="text-xs font-display font-bold uppercase tracking-wider text-ink"
+                  >
+                    {cat.label}
+                  </Text>
+                  <Text className="text-[11px] text-muted font-mono">
+                    {count > 0 ? `${count} save${count > 1 ? 's' : ''}` : 'No saves yet'}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
   );
 };

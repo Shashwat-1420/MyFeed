@@ -13,11 +13,10 @@ interface NotificationState {
 }
 
 interface SavedFeedState {
-  // Navigation & Frame
+  // Navigation
   currentTab: TabName;
   currentScreen: ScreenName;
   selectedSaveId: string | null;
-  isMobileFramed: boolean;
 
   // Data & Filter
   saves: SaveItem[];
@@ -40,7 +39,6 @@ interface SavedFeedState {
   setTab: (tab: TabName) => void;
   setScreen: (screen: ScreenName, saveId?: string) => void;
   setSelectedSaveId: (id: string | null) => void;
-  toggleMobileFrame: () => void;
   toggleDarkMode: () => void;
 
   // Save Operations
@@ -81,7 +79,6 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
   currentTab: 'home',
   currentScreen: 'tabs',
   selectedSaveId: null,
-  isMobileFramed: true, // Phone border wrapper default on desktop preview
 
   saves: MOCK_SAVES,
   categoryFilter: 'all',
@@ -90,8 +87,8 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
 
   profile: DEFAULT_PROFILE,
   darkMode: true,
-  activeAiProvider: 'Anthropic (Server-side Edge Function)',
-  activeAiModel: 'claude-3-5-haiku (pluggable via app_config)',
+  activeAiProvider: 'On-device · ExecuTorch',
+  activeAiModel: 'SmolLM2-360M-Instruct (Q4)',
 
   notification: null,
   sharedUrlPayload: null,
@@ -100,20 +97,10 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
   setTab: (tab) => set({ currentTab: tab, currentScreen: 'tabs' }),
   setScreen: (screen, saveId) => set({ currentScreen: screen, selectedSaveId: saveId || get().selectedSaveId }),
   setSelectedSaveId: (id) => set({ selectedSaveId: id }),
-  toggleMobileFrame: () => set((state) => ({ isMobileFramed: !state.isMobileFramed })),
 
-  toggleDarkMode: () =>
-    set((state) => {
-      const nextMode = !state.darkMode;
-      if (nextMode) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light-mode');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light-mode');
-      }
-      return { darkMode: nextMode };
-    }),
+  // Theme is applied by the root <View> in App.tsx via vars() (src/lib/theme.ts),
+  // so this only flips the flag — no DOM/classList (that was web-only).
+  toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 
   addSave: (item) => {
     const newItem: SaveItem = {

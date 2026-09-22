@@ -1,19 +1,17 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+module.exports = {
+  content: ['./index.ts', './src/**/*.{js,ts,jsx,tsx}'],
+  presets: [require('nativewind/preset')],
   darkMode: 'class',
   theme: {
     extend: {
       /*
-       * Semantic theme tokens (Phase A) — backed by CSS variables in
-       * src/index.css so dark/light mode actually repaints.
-       * Use these for chrome instead of hardcoded hex:
+       * Semantic theme tokens — backed by CSS variables supplied at runtime
+       * via `vars()` in src/lib/theme.ts (dark) / (light). Use these for
+       * chrome instead of hardcoded hex:
        *   bg-canvas bg-panel bg-chip · text-ink text-muted text-dim
-       *   border-edge · text-gold (readable gold in both modes)
-       * Gold FILLS stay literal #F0B31C + text-black (works on both modes).
+       *   border-edge · text-gold (readable yellow in both modes)
+       * Yellow FILLS use the brand literal #FFC800 + black text.
        */
       fontFamily: {
         display: ['"Chakra Petch"', 'sans-serif'],
@@ -21,7 +19,7 @@ export default {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        /* Semantic theme tokens (Phase A) — CSS-var backed, see src/index.css */
+        /* Semantic theme tokens — CSS-var backed, see src/lib/theme.ts */
         canvas: 'rgb(var(--bg-primary) / <alpha-value>)',
         panel: 'rgb(var(--bg-secondary) / <alpha-value>)',
         chip: 'rgb(var(--bg-tertiary) / <alpha-value>)',
@@ -32,19 +30,19 @@ export default {
         gold: {
           DEFAULT: 'rgb(var(--accent-ink) / <alpha-value>)',
           fill: 'rgb(var(--accent-fill) / <alpha-value>)',
-          bright: '#FFCB14',
+          bright: '#FFE800',
         },
         iqoo: {
-          DEFAULT: '#F0B31C',
-          bright: '#FFCB14',
-          deep: '#C8920A',
-          soft: '#FEF6DD',
-          glow: 'rgba(240, 179, 28, 0.4)',
+          DEFAULT: '#FFC800',
+          bright: '#FFE800',
+          deep: '#E0A800',
+          soft: '#FFF7D6',
+          glow: 'rgba(255, 200, 0, 0.4)',
           bg: '#08080C',
           card: '#12131C',
           surface: '#1A1C2B',
-          border: 'rgba(240, 179, 28, 0.25)',
-          blr: '#F0B31C',
+          border: 'rgba(255, 200, 0, 0.25)',
+          blr: '#FFC800',
           hyd: '#7C4DDA',
           che: '#2E7CE4',
           pune: '#E8801F',
@@ -53,7 +51,7 @@ export default {
           bg: '#08080C',
           secondary: '#12131C',
           tertiary: '#1A1C2B',
-          border: 'rgba(240, 179, 28, 0.2)',
+          border: 'rgba(255, 200, 0, 0.2)',
           text: '#F2F2F6',
           muted: '#A0A2B0',
           subtle: '#626478',
@@ -67,12 +65,12 @@ export default {
           muted: '#5E606E',
         },
         accent: {
-          DEFAULT: '#F0B31C',
-          hover: '#FFCB14',
-          light: '#F5C647',
+          DEFAULT: '#FFC800',
+          hover: '#FFE800',
+          light: '#FFD633',
         },
         cat: {
-          tech: '#F0B31C',
+          tech: '#FFC800',
           ai: '#7C4DDA',
           programming: '#2E7CE4',
           design: '#EC4899',
@@ -89,20 +87,20 @@ export default {
         },
       },
       borderRadius: {
-        'card': '16px',
-        'sheet': '24px',
-        'pill': '9999px',
-        'input': '12px',
-        'button': '12px',
+        card: '16px',
+        sheet: '24px',
+        pill: '9999px',
+        input: '12px',
+        button: '12px',
       },
       boxShadow: {
-        'card': '0 4px 20px rgba(0,0,0,0.6)',
-        'sheet': '0 -4px 24px rgba(0,0,0,0.8)',
-        'fab': '0 4px 24px rgba(240,179,28,0.4)',
-        'glow': '0 0 24px rgba(240,179,28,0.35)',
-        'glow-lg': '0 0 40px rgba(240,179,28,0.5)',
+        card: '0 4px 20px rgba(0,0,0,0.6)',
+        sheet: '0 -4px 24px rgba(0,0,0,0.8)',
+        fab: '0 4px 24px rgba(255,200,0,0.4)',
+        glow: '0 0 24px rgba(255,200,0,0.35)',
+        'glow-lg': '0 0 40px rgba(255,200,0,0.5)',
       },
     },
   },
   plugins: [],
-}
+};

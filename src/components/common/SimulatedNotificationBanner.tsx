@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../../store/useSavedFeedStore';
-import { BookOpen, Bell } from 'lucide-react';
+import { BookOpen, Bell } from 'lucide-react-native';
 
 export const SimulatedNotificationBanner: React.FC = () => {
   const { notification, dismissNotification, setScreen } = useSavedFeedStore();
@@ -17,32 +18,34 @@ export const SimulatedNotificationBanner: React.FC = () => {
   if (!notification) return null;
 
   return (
-    <div className="fixed top-2 left-3 right-3 z-50 animate-bounceIn">
-      <div
-        onClick={() => {
+    <View className="absolute top-2 left-3 right-3 z-50">
+      <Pressable
+        onPress={() => {
           setScreen('save_detail', notification.saveId);
           dismissNotification();
         }}
-        className="bg-panel border-2 border-[#F0B31C] rounded-2xl p-3 shadow-glow-lg flex items-center justify-between cursor-pointer hover:bg-chip transition-all"
+        className="bg-panel border-2 border-gold rounded-2xl p-3 shadow-glow-lg flex-row items-center justify-between active:opacity-90"
       >
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-[#F0B31C] flex items-center justify-center text-black font-bold shrink-0 shadow-md">
-            <BookOpen className="w-5 h-5 stroke-[2.5]" />
-          </div>
-          <div className="flex flex-col pr-2">
-            <div className="flex items-center space-x-1.5 text-xs font-display font-bold uppercase tracking-wider text-gold">
-              <Bell className="w-3.5 h-3.5" />
-              <span>Daily Resurface Nudge</span>
-            </div>
-            <span className="text-xs font-medium text-ink line-clamp-1">
+        <View className="flex-row items-center gap-3 flex-1">
+          <View className="w-9 h-9 rounded-xl bg-gold-fill items-center justify-center shrink-0">
+            <BookOpen size={20} color="#000000" strokeWidth={2.5} />
+          </View>
+          <View className="flex-col pr-2 flex-1">
+            <View className="flex-row items-center gap-1.5">
+              <Bell size={14} color="#FFC800" />
+              <Text className="text-xs font-display font-bold uppercase tracking-wider text-gold">
+                Daily Resurface Nudge
+              </Text>
+            </View>
+            <Text numberOfLines={1} className="text-xs font-medium text-ink">
               📚 {notification.title}
-            </span>
-          </div>
-        </div>
-        <span className="text-[10px] bg-[#F0B31C] text-black font-display font-bold uppercase px-2.5 py-1 rounded-lg shrink-0 glow-iqoo">
-          TAP TO VIEW
-        </span>
-      </div>
-    </div>
+            </Text>
+          </View>
+        </View>
+        <View className="bg-gold-fill px-2.5 py-1 rounded-lg shrink-0">
+          <Text className="text-[10px] text-black font-display font-bold uppercase">Tap to View</Text>
+        </View>
+      </Pressable>
+    </View>
   );
 };

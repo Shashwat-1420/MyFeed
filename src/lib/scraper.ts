@@ -18,9 +18,12 @@ export function detectPlatformFromUrl(url: string): PlatformSource {
 }
 
 export function extractDomain(url: string): string {
+  // Hermes' `URL` support is partial, so parse the host with a regex instead.
   try {
-    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
-    return parsed.hostname.replace('www.', '');
+    const withProto = url.startsWith('http') ? url : `https://${url}`;
+    const match = withProto.match(/^https?:\/\/([^/?#]+)/i);
+    if (!match) return 'web.link';
+    return match[1].replace(/^www\./, '');
   } catch {
     return 'web.link';
   }

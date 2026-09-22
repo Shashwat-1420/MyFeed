@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable, Text } from 'react-native';
 import { Category } from '../../types/savedfeed';
 import { CATEGORIES } from '../../lib/categories';
 
@@ -20,25 +21,31 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   const info = CATEGORIES[category] || CATEGORIES.uncategorized;
 
   const sizeClasses = {
-    sm: 'text-[10px] px-2 py-0.5 space-x-1',
-    md: 'text-xs px-2.5 py-1 space-x-1.5',
-    lg: 'text-sm px-3.5 py-1.5 space-x-2',
+    sm: 'text-[10px] px-2 py-0.5',
+    md: 'text-xs px-2.5 py-1',
+    lg: 'text-sm px-3.5 py-1.5',
   };
 
   return (
-    <span
-      onClick={onClick}
+    <Pressable
+      onPress={onClick}
+      disabled={!onClick}
       style={{
         backgroundColor: `${info.color}25`, // opacity tint
-        color: info.color,
         borderColor: `${info.color}50`,
       }}
-      className={`inline-flex items-center font-display tracking-wide uppercase font-bold rounded-full border transition-all duration-200 select-none ${
-        sizeClasses[size]
-      } ${onClick ? 'cursor-pointer hover:scale-105 active:scale-95' : ''} ${className}`}
+      className={`self-start flex-row items-center rounded-full border ${sizeClasses[size]} ${
+        onClick ? 'active:opacity-80' : ''
+      } ${className}`}
     >
-      {showEmoji && <span>{info.emoji}</span>}
-      <span className="truncate">{info.label}</span>
-    </span>
+      {showEmoji && <Text className="mr-1 text-xs">{info.emoji}</Text>}
+      <Text
+        numberOfLines={1}
+        style={{ color: info.color }}
+        className="font-display tracking-wide uppercase font-bold"
+      >
+        {info.label}
+      </Text>
+    </Pressable>
   );
 };

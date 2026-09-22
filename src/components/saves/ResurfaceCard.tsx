@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
 import { SaveItem } from '../../types/savedfeed';
 import { CategoryBadge } from '../common/CategoryBadge';
 import { formatRelativeDaysAgo } from '../../lib/resurface';
 import { useSavedFeedStore } from '../../store/useSavedFeedStore';
-import { Check, ArrowRight } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { Check, ArrowRight } from 'lucide-react-native';
+import { celebrate } from '../../lib/confetti';
+import { useThemeColors } from '../../lib/theme';
 
 interface ResurfaceCardProps {
   save: SaveItem;
@@ -13,19 +15,14 @@ interface ResurfaceCardProps {
 export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
   const { markReviewed, skipResurface, setScreen } = useSavedFeedStore();
   const [swipeState, setSwipeState] = useState<'idle' | 'reviewed' | 'skipped'>('idle');
+  const c = useThemeColors();
 
-  const handleReviewed = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleReviewed = () => {
     setSwipeState('reviewed');
 
-    // Trigger celebration confetti
+    // Celebration (no-op shim on native, see src/lib/confetti.ts)
     try {
-      confetti({
-        particleCount: 40,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#4ADE80', '#F0B31C', '#FBBF24'],
-      });
+      celebrate({ particleCount: 40, spread: 60, origin: { y: 0.7 }, colors: ['#4ADE80', '#FFC800', '#FBBF24'] });
     } catch {
       // fallback
     }
@@ -35,8 +32,7 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
     }, 300);
   };
 
-  const handleSkip = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleSkip = () => {
     setSwipeState('skipped');
     setTimeout(() => {
       skipResurface(save.id);
@@ -44,58 +40,63 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
   };
 
   return (
-    <div
-      onClick={() => setScreen('save_detail', save.id)}
-      className={`w-[260px] h-[165px] bg-panel/90 border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-card flex flex-col justify-between overflow-hidden shrink-0 shadow-card cursor-pointer transition-all duration-300 relative group select-none ${
+    <Pressable
+      onPress={() => setScreen('save_detail', save.id)}
+      className={`w-[260px] h-[165px] bg-panel/90 border rounded-card flex-col justify-between overflow-hidden shrink-0 shadow-card ${
         swipeState === 'reviewed'
-          ? 'translate-x-[200px] opacity-0 scale-90 border-[#F0B31C] glow-iqoo-lg'
+          ? 'opacity-0 border-gold'
           : swipeState === 'skipped'
-          ? '-translate-x-[200px] opacity-0 scale-90 border-edge'
-          : 'hover:-translate-y-1 hover:shadow-glow'
+          ? 'opacity-0 border-edge'
+          : 'border-gold/30'
       }`}
     >
       {/* Top thumbnail 75px */}
-      <div className="h-[75px] w-full relative bg-canvas overflow-hidden">
-        <img
-          src={save.image_url || 'https://picsum.photos/seed/resurface/400/200'}
-          alt={save.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      <View className="h-[75px] w-full relative bg-canvas overflow-hidden">
+        <Image
+          source={{ uri: save.image_url || 'https://picsum.photos/seed/resurface/400/200' }}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-panel via-transparent to-black/40" />
-        <div className="absolute top-2 left-2 z-10">
+        {/* gradient overlay replaced with a flat scrim (RN has no CSS gradients) */}
+        <View className="absolute inset-0 bg-black/30" />
+        <View className="absolute top-2 left-2">
           <CategoryBadge category={save.category} size="sm" />
-        </div>
-      </div>
+        </View>
+      </View>
 
       {/* Middle info */}
-      <div className="px-3 pt-1 flex-1 flex flex-col justify-between">
-        <h4 className="text-xs font-semibold text-ink line-clamp-2 leading-tight group-hover:text-gold transition-colors">
+      <View className="px-3 pt-1 flex-1 flex-col justify-between">
+        <Text numberOfLines={2} className="text-xs font-semibold text-ink leading-tight">
           {save.title}
-        </h4>
-        <div className="text-[10px] text-muted flex items-center justify-between pb-1">
-          <span className="truncate font-mono text-gold/80">{save.domain}</span>
-          <span>•</span>
-          <span>{formatRelativeDaysAgo(save.created_at)}</span>
-        </div>
-      </div>
+        </Text>
+        <View className="flex-row items-center justify-between pb-1">
+          <Text numberOfLines={1} className="text-[10px] font-mono text-gold flex-1">
+            {save.domain}
+          </Text>
+          <Text className="text-[10px] text-muted px-1">•</Text>
+          <Text className="text-[10px] text-muted">{formatRelativeDaysAgo(save.created_at)}</Text>
+        </View>
+      </View>
 
       {/* Bottom actions bar */}
-      <div className="h-[36px] border-t border-[#F0B31C]/20 bg-canvas grid grid-cols-2 divide-x divide-[#F0B31C]/20">
-        <button
-          onClick={handleReviewed}
-          className="flex items-center justify-center space-x-1 text-[11px] font-display font-bold uppercase tracking-wider text-gold hover:bg-[#F0B31C]/20 transition-all active:scale-95"
+      <View className="h-[36px] border-t border-gold/20 bg-canvas flex-row">
+        <Pressable
+          onPress={handleReviewed}
+          className="flex-1 flex-row items-center justify-center gap-1 border-r border-gold/20 active:bg-gold/20"
         >
-          <Check className="w-3.5 h-3.5 stroke-[3]" />
-          <span>Reviewed</span>
-        </button>
-        <button
-          onClick={handleSkip}
-          className="flex items-center justify-center space-x-1 text-[11px] font-medium text-muted hover:bg-chip hover:text-ink transition-colors active:scale-95"
+          <Check size={14} color={c.gold} strokeWidth={3} />
+          <Text className="text-[11px] font-display font-bold uppercase tracking-wider text-gold">
+            Reviewed
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={handleSkip}
+          className="flex-1 flex-row items-center justify-center gap-1 active:bg-chip"
         >
-          <span>Skip</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
-      </div>
-    </div>
+          <Text className="text-[11px] font-medium text-muted">Skip</Text>
+          <ArrowRight size={14} color={c.muted} />
+        </Pressable>
+      </View>
+    </Pressable>
   );
 };

@@ -1,31 +1,36 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Pressable, Text, View } from 'react-native';
+import { Sparkles } from 'lucide-react-native';
 
 export const AdBanner: React.FC = () => {
   return (
-    <div className="w-full my-3 px-1">
-      <div className="text-[10px] text-muted uppercase tracking-widest font-mono font-semibold mb-1 flex items-center gap-1">
-        <span>Sponsored Partner</span>
-        <span className="text-[9px] px-1 bg-panel text-gold border border-[#F0B31C]/30 rounded">iQOO</span>
-      </div>
-      <div className="w-full h-[52px] bg-panel border border-[#F0B31C]/40 rounded-xl flex items-center justify-between px-3 relative overflow-hidden group hover:border-[#F0B31C] transition-all shadow-glow">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FFCB14] to-[#F0B31C] flex items-center justify-center text-black font-bold text-xs shadow-sm">
-            <Sparkles className="w-4 h-4 text-black stroke-[3]" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs font-display font-bold uppercase tracking-wide text-ink group-hover:text-gold transition-colors">
+    <View className="w-full my-3 px-1">
+      <View className="flex-row items-center gap-1 mb-1">
+        <Text className="text-[10px] text-muted uppercase tracking-widest font-mono font-semibold">
+          Sponsored Partner
+        </Text>
+        <View className="bg-panel px-1 border border-gold/30 rounded">
+          <Text className="text-[9px] text-gold font-mono">iQOO</Text>
+        </View>
+      </View>
+      <View className="w-full h-[52px] bg-panel border border-gold/40 rounded-xl flex-row items-center justify-between px-3 shadow-glow">
+        <View className="flex-row items-center gap-2.5">
+          <View className="w-8 h-8 rounded-lg bg-gold-fill items-center justify-center">
+            <Sparkles size={16} color="#000000" strokeWidth={3} />
+          </View>
+          <View className="flex-col">
+            <Text className="text-xs font-display font-bold uppercase tracking-wide text-ink">
               iQOO 2026 Hackathon Finale
-            </span>
-            <span className="text-[10px] text-muted font-mono">
-              ₹40,00,000 Grand Prize Pool
-            </span>
-          </div>
-        </div>
-        <button className="text-[10px] font-display font-bold uppercase tracking-wider bg-[#F0B31C] text-black px-2.5 py-1 rounded-lg hover:bg-[#FFCB14] transition-all active:scale-95 glow-iqoo">
-          Explore
-        </button>
-      </div>
-    </div>
+            </Text>
+            <Text className="text-[10px] text-muted font-mono">₹40,00,000 Grand Prize Pool</Text>
+          </View>
+        </View>
+        <Pressable className="bg-gold-fill active:opacity-80 px-2.5 py-1 rounded-lg">
+          <Text className="text-[10px] font-display font-bold uppercase tracking-wider text-black">
+            Explore
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 };

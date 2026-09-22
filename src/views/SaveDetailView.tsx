@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Image, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { CategoryBadge } from '../components/common/CategoryBadge';
 import { formatRelativeDaysAgo, getResurfaceIntervalDays } from '../lib/resurface';
@@ -13,8 +14,9 @@ import {
   Trash2,
   Clock,
   Sparkles,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+} from 'lucide-react-native';
+import { celebrate } from '../lib/confetti';
+import { useThemeColors } from '../lib/theme';
 
 export const SaveDetailView: React.FC = () => {
   const {
@@ -26,6 +28,7 @@ export const SaveDetailView: React.FC = () => {
     archiveSave,
     deleteSave,
   } = useSavedFeedStore();
+  const c = useThemeColors();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
@@ -35,12 +38,14 @@ export const SaveDetailView: React.FC = () => {
 
   if (!save) {
     return (
-      <div className="flex-1 p-6 text-center text-xs text-muted">
-        Save not found.{' '}
-        <button onClick={() => setTab('inbox')} className="text-gold underline">
-          Go back to Inbox
-        </button>
-      </div>
+      <View className="flex-1 p-6 items-center">
+        <Text className="text-xs text-muted">
+          Save not found.{' '}
+          <Text onPress={() => setTab('inbox')} className="text-gold underline">
+            Go back to Inbox
+          </Text>
+        </Text>
+      </View>
     );
   }
 
@@ -50,12 +55,7 @@ export const SaveDetailView: React.FC = () => {
     setIsFillingReviewed(true);
 
     try {
-      confetti({
-        particleCount: 45,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#4ADE80', '#F0B31C'],
-      });
+      celebrate({ particleCount: 45, spread: 60, origin: { y: 0.8 }, colors: ['#4ADE80', '#FFC800'] });
     } catch {
       // fallback
     }
@@ -67,166 +67,171 @@ export const SaveDetailView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-canvas text-ink animate-fadeIn pb-8">
-      {/* Hero Header Image */}
-      <div className="w-full h-[220px] relative bg-panel shrink-0 border-b border-[#F0B31C]/30">
-        <img
-          src={save.image_url || 'https://picsum.photos/seed/detail/600/400'}
-          alt={save.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-canvas via-canvas/40 to-black/60" />
+    <View className="flex-1 bg-canvas">
+      <ScrollView className="flex-1" contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
+        {/* Hero Header Image */}
+        <View className="w-full h-[220px] relative bg-panel border-b border-gold/30">
+          <Image
+            source={{ uri: save.image_url || 'https://picsum.photos/seed/detail/600/400' }}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+          {/* flat scrim replaces the web gradient */}
+          <View className="absolute inset-0 bg-black/40" />
 
-        {/* Floating Top Nav buttons */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-          <button
-            onClick={() => setTab('inbox')}
-            className="w-9 h-9 rounded-full bg-black/70 backdrop-blur-md border border-[#F0B31C]/30 flex items-center justify-center text-gold hover:bg-black transition-colors shadow-md"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+          {/* Floating Top Nav buttons */}
+          <View className="absolute top-3 left-3 right-3 flex-row items-center justify-between">
+            <Pressable
+              onPress={() => setTab('inbox')}
+              className="w-9 h-9 rounded-full bg-black/70 border border-gold/30 items-center justify-center active:opacity-70"
+            >
+              <ArrowLeft size={20} color={c.goldFill} />
+            </Pressable>
 
-          <button
-            onClick={() => toggleFavourite(save.id)}
-            className="w-9 h-9 rounded-full bg-black/70 backdrop-blur-md border border-[#F0B31C]/30 flex items-center justify-center text-gold hover:bg-black transition-colors shadow-md"
-          >
-            <Star
-              className={`w-5 h-5 ${
-                save.is_favourite ? 'fill-[#F0B31C] text-gold' : 'text-white'
-              }`}
-            />
-          </button>
-        </div>
-      </div>
+            <Pressable
+              onPress={() => toggleFavourite(save.id)}
+              className="w-9 h-9 rounded-full bg-black/70 border border-gold/30 items-center justify-center active:opacity-70"
+            >
+              <Star
+                size={20}
+                color={save.is_favourite ? c.goldFill : '#FFFFFF'}
+                fill={save.is_favourite ? c.goldFill : 'none'}
+              />
+            </Pressable>
+          </View>
+        </View>
 
-      {/* Main Content Area */}
-      <div className="flex-1 px-5 pt-1 space-y-4">
-        {/* Domain & Category */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded bg-panel text-[11px] text-gold font-mono border border-[#F0B31C]/30">
-              <Globe className="w-3 h-3 mr-1" />
-              {save.domain || 'web'}
-            </span>
-            <span className="text-xs text-dim">•</span>
-            <span className="text-xs text-muted">
-              Saved {formatRelativeDaysAgo(save.created_at)}
-            </span>
-          </div>
+        {/* Main Content Area */}
+        <View className="flex-1 px-5 pt-3 gap-4">
+          {/* Domain & Category */}
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center gap-2 flex-1">
+              <View className="bg-panel px-2 py-0.5 rounded flex-row items-center border border-gold/30">
+                <Globe size={12} color={c.gold} />
+                <Text className="text-[11px] text-gold font-mono ml-1">{save.domain || 'web'}</Text>
+              </View>
+              <Text className="text-xs text-dim">•</Text>
+              <Text className="text-xs text-muted">
+                Saved {formatRelativeDaysAgo(save.created_at)}
+              </Text>
+            </View>
 
-          <CategoryBadge category={save.category} size="md" />
-        </div>
+            <CategoryBadge category={save.category} size="md" />
+          </View>
 
-        {/* Title */}
-        <h1 className="text-xl font-bold text-ink leading-snug">{save.title}</h1>
+          {/* Title */}
+          <Text className="text-xl font-bold text-ink leading-snug">{save.title}</Text>
 
-        {/* Tags row */}
-        {save.tags && save.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {save.tags.map((tag, idx) => (
-              <span
-                key={idx}
-                className="text-xs bg-panel border border-[#F0B31C]/20 text-muted px-2.5 py-1 rounded-md font-mono"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <hr className="border-[#F0B31C]/20 my-3" />
-
-        {/* Description */}
-        <div className="text-xs text-muted leading-relaxed space-y-2">
-          <p>{save.description || 'No additional description provided for this save item.'}</p>
-        </div>
-
-        {/* External Link button */}
-        {save.url && (
-          <a
-            href={save.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full py-2.5 rounded-xl border border-[#F0B31C] text-gold hover:bg-[#F0B31C]/20 text-xs font-display font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-all shadow-glow"
-          >
-            <span>Open Original Source</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        )}
-
-        {/* Spaced Repetition Resurface Status Bar */}
-        <div className="bg-panel border border-[#F0B31C]/30 rounded-2xl p-3.5 space-y-2 mt-4">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-1.5 text-gold font-display font-bold uppercase tracking-wider">
-              <Clock className="w-4 h-4" />
-              <span>Spaced Repetition Schedule</span>
-            </div>
-            <span className="text-[11px] text-muted font-mono">
-              Resurfaced {save.resurface_count} times
-            </span>
-          </div>
-
-          {/* Progress dots bar */}
-          <div className="flex items-center space-x-1.5 pt-1">
-            {[1, 3, 7, 14, 30, 60].map((interval, idx) => {
-              const isCompleted = idx < save.resurface_count;
-              return (
-                <div
-                  key={idx}
-                  title={`Interval ${interval} days`}
-                  className={`flex-1 h-2 rounded-full transition-all ${
-                    isCompleted ? 'bg-[#F0B31C] shadow-glow' : 'bg-chip'
-                  }`}
-                />
-              );
-            })}
-          </div>
-
-          <p className="text-[11px] text-dim pt-1">
-            Next resurface interval: <span className="text-gold font-semibold">{nextDays} days</span>
-          </p>
-        </div>
-
-        {/* Mark as Reviewed Button */}
-        <button
-          onClick={handleMarkReviewed}
-          disabled={isFillingReviewed}
-          className={`w-full h-[52px] rounded-xl font-display font-bold uppercase tracking-wider text-xs flex items-center justify-center space-x-2 transition-all relative overflow-hidden ${
-            isFillingReviewed
-              ? 'bg-[#10B981] text-black scale-98'
-              : 'bg-[#F0B31C] hover:bg-[#FFCB14] text-black shadow-glow-lg active:scale-95'
-          }`}
-        >
-          {isFillingReviewed ? (
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" /> Updating interval...
-            </span>
-          ) : (
-            <>
-              <Check className="w-4 h-4 stroke-[3]" />
-              <span>Mark as Reviewed Today</span>
-            </>
+          {/* Tags row */}
+          {save.tags && save.tags.length > 0 && (
+            <View className="flex-row flex-wrap gap-1.5 pt-1">
+              {save.tags.map((tag, idx) => (
+                <View key={idx} className="bg-panel border border-gold/20 px-2.5 py-1 rounded-md">
+                  <Text className="text-xs text-muted font-mono">#{tag}</Text>
+                </View>
+              ))}
+            </View>
           )}
-        </button>
 
-        {/* Danger zone actions */}
-        <div className="pt-4 flex items-center justify-around text-xs border-t border-[#F0B31C]/20">
-          <button
-            onClick={() => setIsArchiveModalOpen(true)}
-            className="text-muted hover:text-gold flex items-center space-x-1 transition-colors"
+          <View className="h-px bg-gold/20 my-1" />
+
+          {/* Description */}
+          <Text className="text-xs text-muted leading-relaxed">
+            {save.description || 'No additional description provided for this save item.'}
+          </Text>
+
+          {/* External Link button */}
+          {save.url && (
+            <Pressable
+              onPress={() => Linking.openURL(save.url as string).catch(() => {})}
+              className="w-full py-2.5 rounded-xl border border-gold flex-row items-center justify-center gap-2 shadow-glow active:opacity-80"
+            >
+              <Text className="text-gold text-xs font-display font-bold uppercase tracking-wider">
+                Open Original Source
+              </Text>
+              <ExternalLink size={14} color={c.gold} />
+            </Pressable>
+          )}
+
+          {/* Spaced Repetition Resurface Status Bar */}
+          <View className="bg-panel border border-gold/30 rounded-2xl p-3.5 gap-2 mt-2">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-1.5">
+                <Clock size={16} color={c.gold} />
+                <Text className="text-xs text-gold font-display font-bold uppercase tracking-wider">
+                  Spaced Repetition
+                </Text>
+              </View>
+              <Text className="text-[11px] text-muted font-mono">
+                Resurfaced {save.resurface_count} times
+              </Text>
+            </View>
+
+            {/* Progress dots bar */}
+            <View className="flex-row items-center gap-1.5 pt-1">
+              {[1, 3, 7, 14, 30, 60].map((interval, idx) => {
+                const isCompleted = idx < save.resurface_count;
+                return (
+                  <View
+                    key={idx}
+                    className={`flex-1 h-2 rounded-full ${isCompleted ? 'bg-gold-fill' : 'bg-chip'}`}
+                  />
+                );
+              })}
+            </View>
+
+            <Text className="text-[11px] text-dim pt-1">
+              Next resurface interval:{' '}
+              <Text className="text-gold font-semibold">{nextDays} days</Text>
+            </Text>
+          </View>
+
+          {/* Mark as Reviewed Button */}
+          <Pressable
+            onPress={handleMarkReviewed}
+            disabled={isFillingReviewed}
+            className={`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2 ${
+              isFillingReviewed ? 'bg-[#10B981]' : 'bg-gold-fill shadow-glow-lg active:opacity-80'
+            }`}
           >
-            <Archive className="w-3.5 h-3.5" />
-            <span>Archive Save</span>
-          </button>
-          <button
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="text-[#F87171] hover:text-red-400 flex items-center space-x-1 transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Delete Save</span>
-          </button>
-        </div>
-      </div>
+            {isFillingReviewed ? (
+              <>
+                <Sparkles size={16} color="#000000" />
+                <Text className="text-xs font-display font-bold uppercase tracking-wider text-black">
+                  Updating interval...
+                </Text>
+              </>
+            ) : (
+              <>
+                <Check size={16} color="#000000" strokeWidth={3} />
+                <Text className="text-xs font-display font-bold uppercase tracking-wider text-black">
+                  Mark as Reviewed Today
+                </Text>
+              </>
+            )}
+          </Pressable>
+
+          {/* Danger zone actions */}
+          <View className="pt-4 flex-row items-center justify-around border-t border-gold/20">
+            <Pressable
+              onPress={() => setIsArchiveModalOpen(true)}
+              className="flex-row items-center gap-1 active:opacity-70"
+            >
+              <Archive size={14} color={c.muted} />
+              <Text className="text-xs text-muted">Archive Save</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setIsDeleteModalOpen(true)}
+              className="flex-row items-center gap-1 active:opacity-70"
+            >
+              <Trash2 size={14} color={c.danger} />
+              <Text className="text-xs" style={{ color: c.danger }}>
+                Delete Save
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </ScrollView>
 
       {/* Confirm Delete Bottom Sheet */}
       <BottomSheetModal
@@ -234,29 +239,30 @@ export const SaveDetailView: React.FC = () => {
         onClose={() => setIsDeleteModalOpen(false)}
         title="Delete this save?"
       >
-        <div className="space-y-4">
-          <p className="text-xs text-muted">
-            Are you sure you want to delete <strong className="text-ink">"{save.title}"</strong>? This action cannot be undone.
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setIsDeleteModalOpen(false)}
-              className="py-3 rounded-xl border border-edge text-xs font-semibold text-muted hover:text-ink"
+        <View className="gap-4">
+          <Text className="text-xs text-muted">
+            Are you sure you want to delete <Text className="text-ink font-bold">"{save.title}"</Text>? This
+            action cannot be undone.
+          </Text>
+          <View className="flex-row gap-3">
+            <Pressable
+              onPress={() => setIsDeleteModalOpen(false)}
+              className="flex-1 py-3 rounded-xl border border-edge items-center active:opacity-70"
             >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
+              <Text className="text-xs font-semibold text-muted">Cancel</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
                 deleteSave(save.id);
                 setIsDeleteModalOpen(false);
                 setTab('inbox');
               }}
-              className="py-3 rounded-xl bg-[#F87171] hover:bg-red-500 text-white text-xs font-semibold shadow-md"
+              className="flex-1 py-3 rounded-xl bg-[#F87171] items-center active:opacity-80"
             >
-              Delete
-            </button>
-          </div>
-        </div>
+              <Text className="text-xs font-semibold text-white">Delete</Text>
+            </Pressable>
+          </View>
+        </View>
       </BottomSheetModal>
 
       {/* Confirm Archive Bottom Sheet */}
@@ -265,30 +271,30 @@ export const SaveDetailView: React.FC = () => {
         onClose={() => setIsArchiveModalOpen(false)}
         title="Archive this save?"
       >
-        <div className="space-y-4">
-          <p className="text-xs text-muted">
+        <View className="gap-4">
+          <Text className="text-xs text-muted">
             Archiving moves this save out of your active inbox. You can unarchive it anytime.
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setIsArchiveModalOpen(false)}
-              className="py-3 rounded-xl border border-edge text-xs font-semibold text-muted hover:text-ink"
+          </Text>
+          <View className="flex-row gap-3">
+            <Pressable
+              onPress={() => setIsArchiveModalOpen(false)}
+              className="flex-1 py-3 rounded-xl border border-edge items-center active:opacity-70"
             >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
+              <Text className="text-xs font-semibold text-muted">Cancel</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
                 archiveSave(save.id);
                 setIsArchiveModalOpen(false);
                 setTab('inbox');
               }}
-              className="py-3 rounded-xl bg-[#F0B31C] hover:bg-[#FFCB14] text-black text-xs font-semibold shadow-md"
+              className="flex-1 py-3 rounded-xl bg-gold-fill items-center active:opacity-80"
             >
-              Archive
-            </button>
-          </div>
-        </div>
+              <Text className="text-xs font-semibold text-black">Archive</Text>
+            </Pressable>
+          </View>
+        </View>
       </BottomSheetModal>
-    </div>
+    </View>
   );
 };

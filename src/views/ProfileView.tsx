@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Image, Pressable, ScrollView, Share, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { BottomSheetModal } from '../components/common/BottomSheetModal';
 import {
@@ -8,17 +9,12 @@ import {
   Bell,
   Cpu,
   Mail,
-  Lock,
   Download,
-  Trash2,
   ChevronRight,
   Flame,
-  Bookmark,
-  CheckCircle,
   Shield,
-  FileText,
-  Star,
-} from 'lucide-react';
+} from 'lucide-react-native';
+import { useThemeColors } from '../lib/theme';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -27,10 +23,10 @@ export const ProfileView: React.FC = () => {
     darkMode,
     toggleDarkMode,
     setTab,
-    setScreen,
     activeAiProvider,
     activeAiModel,
   } = useSavedFeedStore();
+  const c = useThemeColors();
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -38,203 +34,218 @@ export const ProfileView: React.FC = () => {
   const totalSaves = saves.length;
   const reviewedSaves = saves.reduce((acc, s) => acc + s.resurface_count, 0);
 
-  // Handle Export Saves JSON
-  const handleExportSaves = () => {
+  /*
+   * Web build wrote a Blob + <a download>. On Android we hand the JSON to the
+   * OS share sheet instead, which is the native equivalent of "export".
+   */
+  const handleExportSaves = async () => {
     setIsExporting(true);
-    const jsonStr = JSON.stringify(saves, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `SavedFeed_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const jsonStr = JSON.stringify(saves, null, 2);
+      await Share.share({ message: jsonStr, title: 'SavedFeed Backup' });
+    } catch {
+      // user dismissed the share sheet
+    }
     setTimeout(() => setIsExporting(false), 500);
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-canvas text-ink animate-fadeIn p-4 overflow-y-auto pb-10 no-scrollbar">
-      {/* Top Nav Bar */}
-      <div className="flex items-center justify-between mb-4 pt-1">
-        <button
-          onClick={() => setTab('home')}
-          className="flex items-center space-x-1 text-xs text-muted hover:text-gold transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
-        </button>
-        <span className="text-sm font-display font-bold uppercase tracking-wider text-gold">Settings & Profile</span>
-        <div className="w-8" />
-      </div>
+    <View className="flex-1 bg-canvas">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="p-4 pb-10"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Top Nav Bar */}
+        <View className="flex-row items-center justify-between mb-4 pt-1">
+          <Pressable onPress={() => setTab('home')} className="flex-row items-center gap-1 active:opacity-70">
+            <ArrowLeft size={16} color={c.muted} />
+            <Text className="text-xs text-muted">Back to Home</Text>
+          </Pressable>
+          <Text className="text-sm font-display font-bold uppercase tracking-wider text-gold">
+            Settings & Profile
+          </Text>
+          <View className="w-8" />
+        </View>
 
-      {/* Profile Header */}
-      <div className="bg-panel border border-[#F0B31C]/30 rounded-2xl p-4 text-center mb-5 shadow-card glow-iqoo">
-        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#F0B31C] mx-auto mb-3 shadow-glow-lg">
-          <img
-            src={profile.avatar_url || 'https://picsum.photos/seed/user/200/200'}
-            alt={profile.display_name || 'Avatar'}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <h2 className="text-base font-display font-bold uppercase tracking-wider text-ink">{profile.display_name || 'Arjun'}</h2>
-        <p className="text-xs text-muted font-mono mb-4">@{profile.username}</p>
+        {/* Profile Header */}
+        <View className="bg-panel border border-gold/30 rounded-2xl p-4 items-center mb-5 shadow-card">
+          <View className="w-20 h-20 rounded-full overflow-hidden border-2 border-gold mb-3 shadow-glow-lg">
+            <Image
+              source={{ uri: profile.avatar_url || 'https://picsum.photos/seed/user/200/200' }}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
+          </View>
+          <Text className="text-base font-display font-bold uppercase tracking-wider text-ink">
+            {profile.display_name || 'Arjun'}
+          </Text>
+          <Text className="text-xs text-muted font-mono mb-4">@{profile.username}</Text>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-2 border-t border-[#F0B31C]/20 pt-3">
-          <div className="flex flex-col items-center">
-            <span className="text-base font-display font-bold text-gold">{totalSaves}</span>
-            <span className="text-[10px] text-muted uppercase font-display">Total Saves</span>
-          </div>
-          <div className="flex flex-col items-center border-x border-[#F0B31C]/20">
-            <span className="text-base font-display font-bold text-[#10B981]">{reviewedSaves}</span>
-            <span className="text-[10px] text-muted uppercase font-display">Reviewed</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-base font-display font-bold text-gold flex items-center gap-0.5">
-              <Flame className="w-3.5 h-3.5 fill-current" /> {profile.streak_days}
-            </span>
-            <span className="text-[10px] text-muted uppercase font-display">Streak</span>
-          </div>
-        </div>
-      </div>
+          {/* Stats Row */}
+          <View className="flex-row border-t border-gold/20 pt-3 w-full">
+            <View className="flex-1 items-center">
+              <Text className="text-base font-display font-bold text-gold">{totalSaves}</Text>
+              <Text className="text-[10px] text-muted uppercase font-display">Total Saves</Text>
+            </View>
+            <View className="flex-1 items-center border-x border-gold/20">
+              <Text className="text-base font-display font-bold text-[#10B981]">{reviewedSaves}</Text>
+              <Text className="text-[10px] text-muted uppercase font-display">Reviewed</Text>
+            </View>
+            <View className="flex-1 items-center">
+              <View className="flex-row items-center gap-0.5">
+                <Flame size={14} color={c.gold} fill={c.gold} />
+                <Text className="text-base font-display font-bold text-gold">{profile.streak_days}</Text>
+              </View>
+              <Text className="text-[10px] text-muted uppercase font-display">Streak</Text>
+            </View>
+          </View>
+        </View>
 
-      {/* Settings Sections */}
-      <div className="space-y-4 text-xs">
-        {/* Preferences */}
-        <div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest text-gold px-1 block mb-1.5">
-            Preferences
-          </span>
-          <div className="bg-panel border border-[#F0B31C]/20 rounded-xl divide-y divide-[#F0B31C]/15 overflow-hidden">
-            <div className="flex items-center justify-between p-3.5">
-              <div className="flex items-center space-x-2.5">
-                {darkMode ? <Moon className="w-4 h-4 text-gold" /> : <Sun className="w-4 h-4 text-gold" />}
-                <span className="font-medium text-ink">Dark Mode</span>
-              </div>
-              <button
-                onClick={toggleDarkMode}
-                className={`w-11 h-6 rounded-full p-1 transition-colors ${
-                  darkMode ? 'bg-[#F0B31C]' : 'bg-chip'
-                }`}
+        {/* Settings Sections */}
+        <View className="gap-4">
+          {/* Preferences */}
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-gold px-1 mb-1.5">
+              Preferences
+            </Text>
+            <View className="bg-panel border border-gold/20 rounded-xl overflow-hidden">
+              <View className="flex-row items-center justify-between p-3.5 border-b border-gold/15">
+                <View className="flex-row items-center gap-2.5">
+                  {darkMode ? <Moon size={16} color={c.gold} /> : <Sun size={16} color={c.gold} />}
+                  <Text className="font-medium text-ink text-xs">Dark Mode</Text>
+                </View>
+                <Pressable
+                  onPress={toggleDarkMode}
+                  className={`w-11 h-6 rounded-full p-1 ${darkMode ? 'bg-gold-fill' : 'bg-chip'}`}
+                >
+                  <View
+                    className={`w-4 h-4 rounded-full bg-black ${
+                      darkMode ? 'self-end' : 'self-start'
+                    }`}
+                  />
+                </Pressable>
+              </View>
+
+              <View className="flex-row items-center justify-between p-3.5">
+                <View className="flex-row items-center gap-2.5">
+                  <Bell size={16} color={c.gold} />
+                  <Text className="font-medium text-ink text-xs">Daily Nudge Time</Text>
+                </View>
+                <View className="bg-gold/20 border border-gold/30 px-2.5 py-1 rounded-md">
+                  <Text className="text-xs font-mono font-bold text-gold">
+                    {profile.daily_nudge_time} AM
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* AI Settings */}
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-gold px-1 mb-1.5">
+              On-Device AI Config
+            </Text>
+            <View className="bg-panel border border-gold/20 rounded-xl overflow-hidden">
+              <Pressable
+                onPress={() => setIsAiModalOpen(true)}
+                className="flex-row items-center justify-between p-3.5 active:bg-chip"
               >
-                <div
-                  className={`w-4 h-4 rounded-full bg-black transition-transform ${
-                    darkMode ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </div>
+                <View className="flex-row items-center gap-2.5 flex-1">
+                  <Cpu size={16} color={c.gold} />
+                  <View className="flex-1">
+                    <Text className="font-medium text-ink text-xs">Local AI Model</Text>
+                    <Text className="text-[10px] text-muted font-mono">
+                      Provider: {activeAiProvider}
+                    </Text>
+                  </View>
+                </View>
+                <ChevronRight size={16} color={c.dim} />
+              </Pressable>
+            </View>
+          </View>
 
-            <div className="flex items-center justify-between p-3.5">
-              <div className="flex items-center space-x-2.5">
-                <Bell className="w-4 h-4 text-gold" />
-                <span className="font-medium text-ink">Daily Nudge Time</span>
-              </div>
-              <span className="text-xs font-mono font-bold text-gold bg-[#F0B31C]/20 border border-[#F0B31C]/30 px-2.5 py-1 rounded-md">
-                {profile.daily_nudge_time} AM
-              </span>
-            </div>
-          </div>
-        </div>
+          {/* Account */}
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-muted px-1 mb-1.5">
+              Account & Data
+            </Text>
+            <View className="bg-panel border border-gold/20 rounded-xl overflow-hidden">
+              <View className="flex-row items-center justify-between p-3.5 border-b border-gold/15">
+                <View className="flex-row items-center gap-2.5">
+                  <Mail size={16} color={c.muted} />
+                  <Text className="font-medium text-ink text-xs">Email</Text>
+                </View>
+                <Text className="text-[11px] text-muted font-mono">{profile.email}</Text>
+              </View>
 
-        {/* AI Settings */}
-        <div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest text-gold px-1 block mb-1.5">
-            AI System Config
-          </span>
-          <div className="bg-panel border border-[#F0B31C]/20 rounded-xl overflow-hidden">
-            <div
-              onClick={() => setIsAiModalOpen(true)}
-              className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-chip transition-colors"
-            >
-              <div className="flex items-center space-x-2.5">
-                <Cpu className="w-4 h-4 text-gold" />
-                <div className="flex flex-col">
-                  <span className="font-medium text-ink">Pluggable AI Model</span>
-                  <span className="text-[10px] text-muted font-mono">Provider: {activeAiProvider}</span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-dim" />
-            </div>
-          </div>
-        </div>
+              <Pressable
+                onPress={handleExportSaves}
+                className="w-full flex-row items-center justify-between p-3.5 active:bg-chip"
+              >
+                <View className="flex-row items-center gap-2.5">
+                  <Download size={16} color="#10B981" />
+                  <Text className="font-medium text-ink text-xs">
+                    {isExporting ? 'Exporting JSON...' : 'Export My Saves (JSON)'}
+                  </Text>
+                </View>
+                <ChevronRight size={16} color={c.dim} />
+              </Pressable>
+            </View>
+          </View>
 
-        {/* Account */}
-        <div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest text-muted px-1 block mb-1.5">
-            Account & Data
-          </span>
-          <div className="bg-panel border border-[#F0B31C]/20 rounded-xl divide-y divide-[#F0B31C]/15 overflow-hidden">
-            <div className="flex items-center justify-between p-3.5">
-              <div className="flex items-center space-x-2.5">
-                <Mail className="w-4 h-4 text-muted" />
-                <span className="font-medium text-ink">Email</span>
-              </div>
-              <span className="text-[11px] text-muted font-mono">{profile.email}</span>
-            </div>
-
-            <button
-              onClick={handleExportSaves}
-              className="w-full flex items-center justify-between p-3.5 text-left hover:bg-chip transition-colors"
-            >
-              <div className="flex items-center space-x-2.5">
-                <Download className="w-4 h-4 text-[#10B981]" />
-                <span className="font-medium text-ink">
-                  {isExporting ? 'Exporting JSON...' : 'Export My Saves (JSON)'}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-dim" />
-            </button>
-          </div>
-        </div>
-
-        {/* About */}
-        <div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest text-muted px-1 block mb-1.5">
-            About MyFeed
-          </span>
-          <div className="bg-panel border border-[#F0B31C]/20 rounded-xl divide-y divide-[#F0B31C]/15 overflow-hidden">
-            <div className="flex items-center justify-between p-3.5">
-              <span className="font-medium text-muted">App Version</span>
-              <span className="font-mono text-xs text-gold">v1.0.0-iqoo-hackathon</span>
-            </div>
-            <div className="flex items-center justify-between p-3.5">
-              <span className="font-medium text-muted">Privacy Policy</span>
-              <Shield className="w-4 h-4 text-dim" />
-            </div>
-          </div>
-        </div>
-      </div>
+          {/* About */}
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-muted px-1 mb-1.5">
+              About MyFeed
+            </Text>
+            <View className="bg-panel border border-gold/20 rounded-xl overflow-hidden">
+              <View className="flex-row items-center justify-between p-3.5 border-b border-gold/15">
+                <Text className="font-medium text-muted text-xs">App Version</Text>
+                <Text className="font-mono text-xs text-gold">v1.0.0-iqoo-hackathon</Text>
+              </View>
+              <View className="flex-row items-center justify-between p-3.5">
+                <Text className="font-medium text-muted text-xs">Privacy Policy</Text>
+                <Shield size={16} color={c.dim} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
 
       {/* AI Config Info Bottom Sheet */}
       <BottomSheetModal
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
-        title="Pluggable AI System Settings"
+        title="On-Device AI Settings"
       >
-        <div className="space-y-3 text-xs">
-          <p className="text-muted leading-relaxed">
-            SavedFeed uses a <strong className="text-ink">pluggable AI adapter system</strong>. The active AI provider and model are stored in the server-side <code className="bg-chip text-gold px-1 py-0.5 rounded">app_config</code> database table.
-          </p>
-          <div className="bg-chip border border-edge rounded-xl p-3 space-y-1.5 font-mono text-[11px]">
-            <div className="flex justify-between">
-              <span className="text-dim">Active Provider:</span>
-              <span className="text-[#4ADE80]">anthropic</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-dim">Categorization Model:</span>
-              <span className="text-gold">{activeAiModel}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-dim">Embeddings Model:</span>
-              <span className="text-[#FBBF24]">text-embedding-3-small</span>
-            </div>
-          </div>
-          <p className="text-[11px] text-dim">
-            The app administrator can switch AI models dynamically without redeploying client code.
-          </p>
-        </div>
+        <View className="gap-3">
+          <Text className="text-xs text-muted leading-relaxed">
+            MyFeed categorises saves with an{' '}
+            <Text className="text-ink font-bold">on-device local model</Text> — posts never leave your
+            phone. The keyword fallback in{' '}
+            <Text className="text-gold font-mono">aiAdapter.ts</Text> keeps things working if the model
+            isn't loaded yet.
+          </Text>
+          <View className="bg-chip border border-edge rounded-xl p-3 gap-1.5">
+            <View className="flex-row justify-between">
+              <Text className="text-[11px] text-dim font-mono">Runtime:</Text>
+              <Text className="text-[11px] font-mono text-[#4ADE80]">executorch</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-[11px] text-dim font-mono">Categorization Model:</Text>
+              <Text className="text-[11px] font-mono text-gold">{activeAiModel}</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-[11px] text-dim font-mono">Fallback:</Text>
+              <Text className="text-[11px] font-mono text-[#FBBF24]">keyword classifier</Text>
+            </View>
+          </View>
+          <Text className="text-[11px] text-dim">
+            Phase C wires the real on-device inference; this panel reports the active configuration.
+          </Text>
+        </View>
       </BottomSheetModal>
-    </div>
+    </View>
   );
 };
