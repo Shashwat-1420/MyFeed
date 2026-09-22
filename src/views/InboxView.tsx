@@ -3,7 +3,6 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { SaveCard } from '../components/saves/SaveCard';
 import { EmptyState } from '../components/common/EmptyState';
-import { AdBanner } from '../components/common/AdBanner';
 import { CATEGORY_LIST } from '../lib/categories';
 import { Category } from '../types/savedfeed';
 import { Search, RefreshCw, Star } from 'lucide-react-native';
@@ -147,8 +146,6 @@ export const InboxView: React.FC = () => {
         ) : (
           <EmptyState type="inbox_empty" onCtaClick={() => setScreen('new_save')} />
         )}
-
-        <AdBanner />
       </ScrollView>
     </View>
   );

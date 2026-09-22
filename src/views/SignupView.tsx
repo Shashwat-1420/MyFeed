@@ -15,7 +15,7 @@ import { useThemeColors } from '../lib/theme';
 export const SignupView: React.FC = () => {
   const { setScreen } = useSavedFeedStore();
   const c = useThemeColors();
-  const [email, setEmail] = useState('arjun.sharma@example.com');
+  const [email, setEmail] = useState('pranav@example.com');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

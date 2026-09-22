@@ -7,7 +7,7 @@ const HOUR_MS = 3600000;
 export const MOCK_SAVES: SaveItem[] = [
   {
     id: '1',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://medium.com/@author/how-i-learned-ml-in-3-months',
     title: 'How I learned ML in 3 months',
     description: 'A complete self-study curriculum for deep learning, PyTorch, and neural networks without a Math PhD.',
@@ -26,7 +26,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '2',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://github.com/donnemartin/system-design-primer',
     title: 'The complete guide to system design interviews',
     description: 'An open-source handbook on building scalable distributed systems, microservices, load balancing, and caching.',
@@ -45,7 +45,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '3',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://youtube.com/watch?v=figma_autolayout_tutorial',
     title: 'Figma auto-layout: everything you need to know',
     description: 'Step-by-step masterclass on responsive padding, alignment, and auto-layout v5 components in Figma.',
@@ -64,7 +64,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '4',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://dev.to/top-10-vscode-extensions-2024',
     title: 'Top 10 VS Code extensions for 2024',
     description: 'Boost your daily development speed with AI autocomplete, code formatting, GitLens, and theme customizations.',
@@ -83,7 +83,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '5',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://hashnode.com/passive-income-for-developers',
     title: 'How to build passive income as a developer',
     description: 'Practical guide to launching SaaS micro-apps, digital API tools, and technical newsletter monetization.',
@@ -102,7 +102,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '6',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://edx.org/course/cs50-introduction-to-computer-science',
     title: 'CS50: Introduction to Computer Science (Free)',
     description: 'Harvard University flagship entry course covering C, Python, SQL, algorithms, and web dev fundamentals.',
@@ -121,7 +121,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '7',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://reddit.com/r/reactnative/comments/rn_vs_flutter_2024',
     title: 'React Native vs Flutter in 2024 — which one to pick',
     description: 'Detailed benchmark breakdown comparing Hermes JS engine vs Dart AOT compilation, native modules, and job market trends.',
@@ -140,7 +140,7 @@ export const MOCK_SAVES: SaveItem[] = [
   },
   {
     id: '8',
-    user_id: 'usr_arjun',
+    user_id: 'usr_pranav',
     url: 'https://fs.blog/feynman-learning-technique',
     title: 'The Feynman technique for actually learning things',
     description: 'Mental model for rapid comprehension: explain complex topics in simple language to identify mental gaps.',

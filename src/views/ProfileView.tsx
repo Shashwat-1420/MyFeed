@@ -29,18 +29,48 @@ export const ProfileView: React.FC = () => {
     activeAiModel,
     localModelReady,
     localModelProgress,
+    setNudgeTime,
   } = useSavedFeedStore();
   const c = useThemeColors();
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isTestingReminder, setIsTestingReminder] = useState(false);
+  const [isNudgeModalOpen, setIsNudgeModalOpen] = useState(false);
+  const [nudgeHour, setNudgeHour] = useState(9);
+  const [nudgeMinute, setNudgeMinute] = useState(0);
 
   const handleTestReminder = async () => {
     setIsTestingReminder(true);
     await sendTestReminder().catch(() => {});
     setTimeout(() => setIsTestingReminder(false), 1500);
   };
+
+  /** "09:00" -> "9:00 AM" */
+  const formatTime12h = (time: string) => {
+    const [hStr, mStr] = time.split(':');
+    const hour = Number.parseInt(hStr ?? '9', 10) || 0;
+    const minute = (mStr ?? '00').padStart(2, '0');
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${minute} ${period}`;
+  };
+
+  const openNudgeModal = () => {
+    const [hStr, mStr] = profile.daily_nudge_time.split(':');
+    setNudgeHour(Number.parseInt(hStr ?? '9', 10) || 0);
+    setNudgeMinute(Number.parseInt(mStr ?? '0', 10) || 0);
+    setIsNudgeModalOpen(true);
+  };
+
+  const applyNudgeTime = () => {
+    const time = `${String(nudgeHour).padStart(2, '0')}:${String(nudgeMinute).padStart(2, '0')}`;
+    setNudgeTime(time);
+    setIsNudgeModalOpen(false);
+  };
+
+  const NUDGE_HOURS = Array.from({ length: 19 }, (_, i) => i + 5); // 05:00 – 23:00
+  const NUDGE_MINUTES = [0, 15, 30, 45];
 
   const totalSaves = saves.length;
   const reviewedSaves = saves.reduce((acc, s) => acc + s.resurface_count, 0);
@@ -89,7 +119,7 @@ export const ProfileView: React.FC = () => {
             />
           </View>
           <Text className="text-base font-display font-bold uppercase tracking-wider text-ink">
-            {profile.display_name || 'Arjun'}
+            {profile.display_name || 'Pranav'}
           </Text>
           <Text className="text-xs text-muted font-mono mb-4">@{profile.username}</Text>
 
@@ -138,17 +168,23 @@ export const ProfileView: React.FC = () => {
                 </Pressable>
               </View>
 
-              <View className="flex-row items-center justify-between p-3.5">
+              <Pressable
+                onPress={openNudgeModal}
+                className="flex-row items-center justify-between p-3.5 border-t border-gold/15 active:bg-chip"
+              >
                 <View className="flex-row items-center gap-2.5">
                   <Bell size={16} color={c.gold} />
                   <Text className="font-medium text-ink text-xs">Daily Nudge Time</Text>
                 </View>
-                <View className="bg-gold/20 border border-gold/30 px-2.5 py-1 rounded-md">
-                  <Text className="text-xs font-mono font-bold text-gold">
-                    {profile.daily_nudge_time} AM
-                  </Text>
+                <View className="flex-row items-center gap-1.5">
+                  <View className="bg-gold/20 border border-gold/30 px-2.5 py-1 rounded-md">
+                    <Text className="text-xs font-mono font-bold text-gold">
+                      {formatTime12h(profile.daily_nudge_time)}
+                    </Text>
+                  </View>
+                  <ChevronRight size={16} color={c.dim} />
                 </View>
-              </View>
+              </Pressable>
 
               {/* Demo trigger — fires the real local notification immediately */}
               <Pressable
@@ -278,6 +314,92 @@ export const ProfileView: React.FC = () => {
           <Text className="text-[11px] text-dim">
             Phase C wires the real on-device inference; this panel reports the active configuration.
           </Text>
+        </View>
+      </BottomSheetModal>
+
+      {/* Daily nudge time picker */}
+      <BottomSheetModal
+        isOpen={isNudgeModalOpen}
+        onClose={() => setIsNudgeModalOpen(false)}
+        title="Daily Nudge Time"
+      >
+        <View className="gap-4">
+          <Text className="text-xs text-muted leading-relaxed">
+            When your spaced-repetition reminder should arrive each day. Changing it re-schedules
+            the local notification.
+          </Text>
+
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-gold mb-2">
+              Hour
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {NUDGE_HOURS.map((hour) => {
+                const isActive = nudgeHour === hour;
+                return (
+                  <Pressable
+                    key={hour}
+                    onPress={() => setNudgeHour(hour)}
+                    style={
+                      isActive
+                        ? { backgroundColor: '#FFC800', borderWidth: 1, borderColor: '#FFC800' }
+                        : { borderWidth: 1, borderColor: 'rgba(255,200,0,0.30)' }
+                    }
+                    className="px-3 py-2 rounded-lg bg-panel"
+                  >
+                    <Text
+                      style={{ color: isActive ? '#000000' : c.muted }}
+                      className="text-xs font-mono"
+                    >
+                      {String(hour).padStart(2, '0')}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <View>
+            <Text className="text-[10px] font-display font-bold uppercase tracking-widest text-gold mb-2">
+              Minute
+            </Text>
+            <View className="flex-row gap-2">
+              {NUDGE_MINUTES.map((minute) => {
+                const isActive = nudgeMinute === minute;
+                return (
+                  <Pressable
+                    key={minute}
+                    onPress={() => setNudgeMinute(minute)}
+                    style={
+                      isActive
+                        ? { backgroundColor: '#FFC800', borderWidth: 1, borderColor: '#FFC800' }
+                        : { borderWidth: 1, borderColor: 'rgba(255,200,0,0.30)' }
+                    }
+                    className="px-4 py-2 rounded-lg bg-panel"
+                  >
+                    <Text
+                      style={{ color: isActive ? '#000000' : c.muted }}
+                      className="text-xs font-mono"
+                    >
+                      :{String(minute).padStart(2, '0')}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <Pressable
+            onPress={applyNudgeTime}
+            className="w-full h-[52px] rounded-xl bg-gold-fill items-center justify-center active:opacity-80"
+          >
+            <Text className="text-black text-xs font-display font-bold uppercase tracking-wider">
+              Set{' '}
+              {formatTime12h(
+                `${String(nudgeHour).padStart(2, '0')}:${String(nudgeMinute).padStart(2, '0')}`
+              )}
+            </Text>
+          </Pressable>
         </View>
       </BottomSheetModal>
     </View>

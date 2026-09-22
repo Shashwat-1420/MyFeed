@@ -47,6 +47,7 @@ interface SavedFeedState {
   setScreen: (screen: ScreenName, saveId?: string) => void;
   setSelectedSaveId: (id: string | null) => void;
   toggleDarkMode: () => void;
+  setNudgeTime: (time: string) => void;
 
   // Save Operations
   addSave: (item: Omit<SaveItem, 'id' | 'created_at' | 'updated_at' | 'resurface_count' | 'times_viewed' | 'is_archived' | 'is_favourite' | 'next_resurface_at'> & { next_resurface_at?: string }) => SaveItem;
@@ -72,10 +73,10 @@ interface SavedFeedState {
 }
 
 const DEFAULT_PROFILE: UserProfile = {
-  id: 'usr_arjun',
-  email: 'arjun.sharma@example.com',
-  username: 'arjun_saves',
-  display_name: 'Arjun',
+  id: 'usr_pranav',
+  email: 'pranav@example.com',
+  username: 'pranav_saves',
+  display_name: 'Pranav',
   avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   streak_days: 5,
   daily_nudge_time: '09:00',
@@ -112,6 +113,10 @@ export const useSavedFeedStore = create<SavedFeedState>((set, get) => ({
   // Theme is applied by the root <View> in App.tsx via vars() (src/lib/theme.ts),
   // so this only flips the flag — no DOM/classList (that was web-only).
   toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+
+  // Changing this re-schedules the daily local reminder (see App.tsx).
+  setNudgeTime: (time) =>
+    set((state) => ({ profile: { ...state.profile, daily_nudge_time: time } })),
 
   // Guarded so the ~100 download-progress ticks don't re-render needlessly.
   setLocalModelStatus: (ready, progress) =>

@@ -3,10 +3,9 @@ import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSavedFeedStore } from '../store/useSavedFeedStore';
 import { ResurfaceCard } from '../components/saves/ResurfaceCard';
 import { SaveCard } from '../components/saves/SaveCard';
-import { AdBanner } from '../components/common/AdBanner';
 import { EmptyState } from '../components/common/EmptyState';
 import { isDueForResurface } from '../lib/resurface';
-import { Flame, Clock, Sparkles, Zap } from 'lucide-react-native';
+import { Flame, Clock, Sparkles } from 'lucide-react-native';
 import { useThemeColors } from '../lib/theme';
 
 export const HomeView: React.FC = () => {
@@ -35,33 +34,11 @@ export const HomeView: React.FC = () => {
       contentContainerClassName="p-4 pb-8"
       showsVerticalScrollIndicator={false}
     >
-      {/* iQOO Hackathon Edition Banner — flat panel scrim replaces the web gradient */}
-      <View className="w-full mb-4 p-3 rounded-2xl bg-panel border border-gold/40 flex-row items-center justify-between shadow-glow">
-        <View className="flex-row items-center gap-2.5 flex-1">
-          <View className="w-8 h-8 rounded-xl bg-gold-fill items-center justify-center">
-            <Zap size={16} color="#000000" strokeWidth={2.5} />
-          </View>
-          <View className="flex-1">
-            <View className="flex-row items-center gap-1.5">
-              <Text className="font-display tracking-widest text-gold font-bold text-xs uppercase">
-                iQOO Hackathon 2026
-              </Text>
-              <View className="bg-gold/30 px-1.5 py-0.5 rounded">
-                <Text className="text-[9px] text-gold font-mono">FINALS</Text>
-              </View>
-            </View>
-            <Text className="text-[10px] text-muted font-mono">
-              India's Biggest Phone-First Hackathon
-            </Text>
-          </View>
-        </View>
-      </View>
-
       {/* Header Area */}
       <View className="flex-row items-center justify-between mb-5 pt-1">
         <View className="flex-1">
           <Text className="text-xl font-bold text-ink font-display tracking-wide">
-            {getGreeting()}, {profile.display_name || 'Arjun'}
+            {getGreeting()}, {profile.display_name || 'Pranav'}
           </Text>
           <Text className="text-xs text-muted font-medium">{formattedDate}</Text>
         </View>
@@ -152,9 +129,6 @@ export const HomeView: React.FC = () => {
           <EmptyState type="home_no_saves" onCtaClick={() => setScreen('new_save')} />
         )}
       </View>
-
-      {/* AdMob Banner at bottom */}
-      <AdBanner />
     </ScrollView>
   );
 };

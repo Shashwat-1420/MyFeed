@@ -199,8 +199,14 @@ The Vite app was replaced by an Expo/RN app **in the same repo**:
   pass. Do not rely on `npm run lint` (broken, see above).
 - **Theme:** use the semantic tokens (`bg-canvas`/`bg-panel`/`bg-chip`/`text-ink`/`text-muted`/
   `text-dim`/`border-edge`/`text-gold`) for chrome, never raw hex. Raw hex is allowed only for:
-  category colours (`src/lib/categories.ts`), status/danger colours, platform colours, brand yellow
-  fills (`bg-gold-fill` + `text-black`), and the light-mode palette in `src/lib/theme.ts`.
+  the brand yellow fill (`bg-gold-fill` + `text-black`), the destructive red (`#F87171` / `c.danger`),
+  and the light-mode palette in `src/lib/theme.ts`.
+- **Monochrome by design.** The UI is **yellow / black / white only** — do not introduce
+  per-category or per-platform colours. Categories carry a **lucide icon**, not an emoji and not a
+  colour (`src/lib/categories.ts`); tinting comes from the shared gold tokens. Avoid emoji in
+  general — use a lucide icon when a glyph carries meaning, otherwise drop it.
+- **Thumbnails:** always render through `SaveThumbnail` (`src/components/common/SaveThumbnail.tsx`)
+  so a missing `og:image` falls back to a gold-on-panel domain initial, never a stock photo.
 - **Both themes matter.** Any new surface/text colour must work in dark *and* light — add values to
   both `DARK_VARS` and `LIGHT_VARS` in `src/lib/theme.ts` (and `THEME` for icon hexes).
 - **Native constraints to remember:** no CSS gradients, no `backdrop-blur`, no `hover:`, no CSS

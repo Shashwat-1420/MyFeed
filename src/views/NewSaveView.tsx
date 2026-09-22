@@ -95,7 +95,7 @@ export const NewSaveView: React.FC = () => {
 
     setTimeout(() => {
       addSave({
-        user_id: 'usr_arjun',
+        user_id: 'usr_pranav',
         url: mode === 'link' ? urlInput : null,
         title: title || (mode === 'note' ? noteContent.slice(0, 40) : 'Saved Item'),
         description: description || (mode === 'note' ? noteContent : null),
