@@ -61,19 +61,19 @@ export const SearchView: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-[#0D0D0D] text-[#F2F2F2] animate-fadeIn">
+    <div className="flex-1 flex flex-col p-4 bg-[#08080C] text-[#F2F2F6] animate-fadeIn">
       {/* Search Bar Input */}
       <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2 mb-4 pt-1">
         <button
           type="button"
           onClick={() => setTab('home')}
-          className="p-2 text-[#9A9A9A] hover:text-white"
+          className="p-2 text-[#A0A2B0] hover:text-[#F0B31C]"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
 
         <div className="flex-1 relative flex items-center">
-          <Search className="w-4 h-4 text-[#5A5A5A] absolute left-3.5" />
+          <Search className="w-4 h-4 text-[#F0B31C] absolute left-3.5" />
           <input
             type="text"
             value={inputVal}
@@ -83,7 +83,7 @@ export const SearchView: React.FC = () => {
             }}
             placeholder="Search semantically or by keywords..."
             autoFocus
-            className="w-full h-11 bg-[#1A1A1A] border border-[#2E2E2E] focus:border-[#7C6EF6] rounded-xl pl-10 pr-9 text-xs text-[#F2F2F2] outline-none transition-colors"
+            className="w-full h-11 bg-[#12131C] border border-[#F0B31C]/30 focus:border-[#F0B31C] focus:shadow-glow rounded-xl pl-10 pr-9 text-xs text-[#F2F2F6] outline-none transition-all"
           />
           {inputVal && (
             <button
@@ -92,7 +92,7 @@ export const SearchView: React.FC = () => {
                 setInputVal('');
                 setSearchQuery('');
               }}
-              className="absolute right-3 text-[#5A5A5A] hover:text-white"
+              className="absolute right-3 text-[#A0A2B0] hover:text-[#F0B31C]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -102,7 +102,7 @@ export const SearchView: React.FC = () => {
 
       {/* Searching semantically spinner indicator */}
       {isSearchingSemantic && (
-        <div className="flex items-center space-x-2 text-xs text-[#8B5CF6] mb-3 px-1 animate-pulse">
+        <div className="flex items-center space-x-2 text-xs text-[#F0B31C] mb-3 px-1 animate-pulse font-mono">
           <Sparkles className="w-3.5 h-3.5 animate-spin" />
           <span>Searching vector embeddings semantically...</span>
         </div>
@@ -116,12 +116,12 @@ export const SearchView: React.FC = () => {
           {recentSearches.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9A9A9A]">
+                <span className="text-[11px] font-display font-bold uppercase tracking-widest text-[#F0B31C]">
                   Recent Searches
                 </span>
                 <button
                   onClick={clearRecentSearches}
-                  className="text-[11px] text-[#5A5A5A] hover:text-white"
+                  className="text-[11px] text-[#626478] hover:text-[#F0B31C]"
                 >
                   Clear all
                 </button>
@@ -131,10 +131,10 @@ export const SearchView: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => handleChipClick(term)}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-[#1A1A1A] text-xs text-[#9A9A9A] hover:text-white transition-colors"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-[#12131C] text-xs text-[#A0A2B0] hover:text-[#F0B31C] border border-transparent hover:border-[#F0B31C]/30 transition-all"
                   >
                     <div className="flex items-center space-x-2">
-                      <Clock className="w-3.5 h-3.5 text-[#5A5A5A]" />
+                      <Clock className="w-3.5 h-3.5 text-[#F0B31C]" />
                       <span>{term}</span>
                     </div>
                   </button>
@@ -145,7 +145,7 @@ export const SearchView: React.FC = () => {
 
           {/* Suggested Topics */}
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9A9A9A] block mb-2.5">
+            <span className="text-[11px] font-display font-bold uppercase tracking-widest text-[#A0A2B0] block mb-2.5">
               Suggested Topics
             </span>
             <div className="flex flex-wrap gap-2">
@@ -154,7 +154,7 @@ export const SearchView: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => handleChipClick(topic)}
-                    className="px-3 py-1.5 rounded-full bg-[#1A1A1A] border border-[#2E2E2E] text-xs text-[#9A9A9A] hover:text-white hover:border-[#7C6EF6] transition-all"
+                    className="px-3 py-1.5 rounded-full bg-[#12131C] border border-[#F0B31C]/30 text-xs text-[#A0A2B0] font-mono hover:text-[#F0B31C] hover:border-[#F0B31C] hover:shadow-glow transition-all"
                   >
                     #{topic}
                   </button>
@@ -166,7 +166,7 @@ export const SearchView: React.FC = () => {
       ) : (
         /* Results State */
         <div className="flex-1 space-y-3">
-          <div className="text-xs text-[#9A9A9A] mb-2 font-medium">
+          <div className="text-xs text-[#A0A2B0] mb-2 font-medium">
             {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{q}"
           </div>
 

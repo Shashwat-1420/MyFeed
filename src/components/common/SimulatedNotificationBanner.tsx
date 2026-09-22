@@ -23,24 +23,24 @@ export const SimulatedNotificationBanner: React.FC = () => {
           setScreen('save_detail', notification.saveId);
           dismissNotification();
         }}
-        className="bg-[#1F1F1F] border border-[#7C6EF6] rounded-2xl p-3 shadow-glow flex items-center justify-between cursor-pointer hover:bg-[#252525] transition-all"
+        className="bg-[#12131C] border-2 border-[#F0B31C] rounded-2xl p-3 shadow-glow-lg flex items-center justify-between cursor-pointer hover:bg-[#1A1C2B] transition-all"
       >
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-[#7C6EF6] flex items-center justify-center text-white shrink-0 shadow-md">
-            <BookOpen className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-[#F0B31C] flex items-center justify-center text-black font-bold shrink-0 shadow-md">
+            <BookOpen className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="flex flex-col pr-2">
-            <div className="flex items-center space-x-1.5 text-xs font-semibold text-[#7C6EF6]">
+            <div className="flex items-center space-x-1.5 text-xs font-display font-bold uppercase tracking-wider text-[#F0B31C]">
               <Bell className="w-3.5 h-3.5" />
               <span>Daily Resurface Nudge</span>
             </div>
-            <span className="text-xs font-medium text-[#F2F2F2] line-clamp-1">
+            <span className="text-xs font-medium text-[#F2F2F6] line-clamp-1">
               📚 {notification.title}
             </span>
           </div>
         </div>
-        <span className="text-[10px] bg-[#7C6EF6]/20 text-[#7C6EF6] font-semibold px-2 py-1 rounded-lg shrink-0">
-          Tap to view
+        <span className="text-[10px] bg-[#F0B31C] text-black font-display font-bold uppercase px-2.5 py-1 rounded-lg shrink-0 glow-iqoo">
+          TAP TO VIEW
         </span>
       </div>
     </div>

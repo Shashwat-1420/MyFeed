@@ -35,20 +35,20 @@ export const SaveCard: React.FC<SaveCardProps> = ({
       <div
         onClick={handleCardClick}
         onContextMenu={handleLongPress}
-        className={`w-full bg-[#1A1A1A] hover:bg-[#222222] border border-[#2E2E2E] hover:border-[#7C6EF6]/30 rounded-card p-3.5 transition-all duration-200 cursor-pointer shadow-card group active:scale-[0.99] relative overflow-hidden mb-3 ${
+        className={`w-full bg-[#12131C]/90 hover:bg-[#1A1C2B] border border-[#F0B31C]/20 hover:border-[#F0B31C]/50 rounded-card p-3.5 transition-all duration-200 cursor-pointer shadow-card group active:scale-[0.99] relative overflow-hidden mb-3 ${
           isDeleting ? 'opacity-0 scale-95 transition-all duration-300' : ''
         }`}
       >
         {/* Semantic search match indicator */}
         {semanticMatch && (
-          <div className="text-[10px] text-[#8B5CF6] font-semibold flex items-center gap-1 mb-1">
-            <span>~ Semantic match</span>
+          <div className="text-[10px] text-[#F0B31C] font-mono font-semibold flex items-center gap-1 mb-1">
+            <span>⚡ AI Semantic Match</span>
           </div>
         )}
 
         <div className="flex items-start space-x-3">
           {/* Thumbnail */}
-          <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-[#242424] shrink-0 border border-[#2E2E2E]">
+          <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-[#08080C] shrink-0 border border-[#F0B31C]/20">
             <img
               src={save.image_url || 'https://picsum.photos/seed/save/200/200'}
               alt={save.title}
@@ -63,17 +63,17 @@ export const SaveCard: React.FC<SaveCardProps> = ({
               <div className="flex items-center justify-between mb-1">
                 {showCategory && <CategoryBadge category={save.category} size="sm" />}
                 {save.is_favourite && (
-                  <Star className="w-3.5 h-3.5 fill-[#FBBF24] text-[#FBBF24] shrink-0" />
+                  <Star className="w-3.5 h-3.5 fill-[#F0B31C] text-[#F0B31C] shrink-0" />
                 )}
               </div>
-              <h4 className="text-xs font-semibold text-[#F2F2F2] line-clamp-2 leading-snug group-hover:text-[#7C6EF6] transition-colors">
+              <h4 className="text-xs font-semibold text-[#F2F2F6] line-clamp-2 leading-snug group-hover:text-[#F0B31C] transition-colors">
                 {save.title}
               </h4>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-[#9A9A9A] pt-1">
+            <div className="flex items-center justify-between text-[11px] text-[#A0A2B0] pt-1">
               <div className="flex items-center space-x-1.5 truncate">
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-[#242424] text-[10px] text-[#9A9A9A] font-mono">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-[#1A1C2B] text-[10px] text-[#F0B31C] font-mono border border-[#F0B31C]/20">
                   <Globe className="w-2.5 h-2.5 mr-1" />
                   {save.domain || 'web'}
                 </span>
@@ -84,7 +84,7 @@ export const SaveCard: React.FC<SaveCardProps> = ({
               {/* Tags preview */}
               {save.tags && save.tags.length > 0 && (
                 <div className="flex items-center space-x-1 shrink-0">
-                  <span className="text-[10px] bg-[#242424] text-[#5A5A5A] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] bg-[#1A1C2B] text-[#A0A2B0] px-1.5 py-0.5 rounded border border-white/5 font-mono">
                     #{save.tags[0]}
                   </span>
                 </div>

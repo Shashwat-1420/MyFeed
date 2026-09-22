@@ -26,14 +26,14 @@ export const InboxView: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-[#0D0D0D] text-[#F2F2F2] animate-fadeIn">
+    <div className="flex-1 flex flex-col p-4 bg-[#08080C] text-[#F2F2F6] animate-fadeIn">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between mb-3 pt-1">
-        <h1 className="text-xl font-bold text-[#F2F2F2]">Inbox</h1>
+        <h1 className="text-xl font-display font-bold uppercase tracking-wider text-[#F0B31C]">Inbox</h1>
         <button
           onClick={handleRefresh}
-          className={`p-2 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] text-[#9A9A9A] hover:text-white transition-all ${
-            isRefreshing ? 'animate-spin text-[#7C6EF6]' : ''
+          className={`p-2 rounded-xl bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F0B31C] transition-all ${
+            isRefreshing ? 'animate-spin text-[#F0B31C]' : ''
           }`}
           title="Pull to refresh"
         >
@@ -44,9 +44,9 @@ export const InboxView: React.FC = () => {
       {/* Search trigger bar */}
       <div
         onClick={() => setTab('search')}
-        className="w-full h-11 bg-[#1A1A1A] border border-[#2E2E2E] hover:border-[#7C6EF6]/40 rounded-xl px-3.5 flex items-center space-x-2.5 text-xs text-[#5A5A5A] cursor-pointer mb-3 transition-colors shadow-sm"
+        className="w-full h-11 bg-[#12131C] border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-xl px-3.5 flex items-center space-x-2.5 text-xs text-[#A0A2B0] cursor-pointer mb-3 transition-all shadow-sm"
       >
-        <Search className="w-4 h-4 text-[#5A5A5A]" />
+        <Search className="w-4 h-4 text-[#F0B31C]" />
         <span>Search your saves...</span>
       </div>
 
@@ -55,10 +55,10 @@ export const InboxView: React.FC = () => {
         {/* All chip */}
         <button
           onClick={() => setCategoryFilter('all')}
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all ${
+          className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 transition-all ${
             categoryFilter === 'all'
-              ? 'bg-[#7C6EF6] text-white shadow-glow'
-              : 'bg-[#1A1A1A] border border-[#2E2E2E] text-[#9A9A9A] hover:text-white'
+              ? 'bg-[#F0B31C] text-black shadow-glow'
+              : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
           }`}
         >
           All ({saves.filter((s) => !s.is_archived).length})
@@ -67,10 +67,10 @@ export const InboxView: React.FC = () => {
         {/* Favourites chip */}
         <button
           onClick={() => setCategoryFilter('favourites')}
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 flex items-center space-x-1 transition-all ${
+          className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
             categoryFilter === 'favourites'
-              ? 'bg-[#FBBF24] text-black shadow-md'
-              : 'bg-[#1A1A1A] border border-[#2E2E2E] text-[#9A9A9A] hover:text-white'
+              ? 'bg-[#FFCB14] text-black shadow-glow'
+              : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
           }`}
         >
           <Star className="w-3 h-3 fill-current" />
@@ -85,15 +85,15 @@ export const InboxView: React.FC = () => {
             <button
               key={cat.id}
               onClick={() => setCategoryFilter(cat.id as Category)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 flex items-center space-x-1 transition-all ${
+              className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
                 isActive
-                  ? 'bg-[#7C6EF6] text-white shadow-glow'
-                  : 'bg-[#1A1A1A] border border-[#2E2E2E] text-[#9A9A9A] hover:text-white'
+                  ? 'bg-[#F0B31C] text-black shadow-glow'
+                  : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
               }`}
             >
               <span>{cat.emoji}</span>
               <span>{cat.label}</span>
-              {count > 0 && <span className="text-[10px] opacity-75">({count})</span>}
+              {count > 0 && <span className="text-[10px] opacity-75 font-mono">({count})</span>}
             </button>
           );
         })}

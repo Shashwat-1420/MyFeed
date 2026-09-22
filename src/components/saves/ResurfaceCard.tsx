@@ -46,22 +46,22 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
   return (
     <div
       onClick={() => setScreen('save_detail', save.id)}
-      className={`w-[260px] h-[165px] bg-[#1A1A1A] border border-[#2E2E2E] hover:border-[#7C6EF6]/40 rounded-card flex flex-col justify-between overflow-hidden shrink-0 shadow-card cursor-pointer transition-all duration-300 relative group select-none ${
+      className={`w-[260px] h-[165px] bg-[#12131C]/90 border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-card flex flex-col justify-between overflow-hidden shrink-0 shadow-card cursor-pointer transition-all duration-300 relative group select-none ${
         swipeState === 'reviewed'
-          ? 'translate-x-[200px] opacity-0 scale-90 border-[#4ADE80]'
+          ? 'translate-x-[200px] opacity-0 scale-90 border-[#F0B31C] glow-iqoo-lg'
           : swipeState === 'skipped'
-          ? '-translate-x-[200px] opacity-0 scale-90 border-[#5A5A5A]'
-          : 'hover:-translate-y-1'
+          ? '-translate-x-[200px] opacity-0 scale-90 border-[#626478]'
+          : 'hover:-translate-y-1 hover:shadow-glow'
       }`}
     >
-      {/* Top thumbnail 80px */}
-      <div className="h-[75px] w-full relative bg-[#242424] overflow-hidden">
+      {/* Top thumbnail 75px */}
+      <div className="h-[75px] w-full relative bg-[#08080C] overflow-hidden">
         <img
           src={save.image_url || 'https://picsum.photos/seed/resurface/400/200'}
           alt={save.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#12131C] via-transparent to-black/40" />
         <div className="absolute top-2 left-2 z-10">
           <CategoryBadge category={save.category} size="sm" />
         </div>
@@ -69,28 +69,28 @@ export const ResurfaceCard: React.FC<ResurfaceCardProps> = ({ save }) => {
 
       {/* Middle info */}
       <div className="px-3 pt-1 flex-1 flex flex-col justify-between">
-        <h4 className="text-xs font-semibold text-[#F2F2F2] line-clamp-2 leading-tight group-hover:text-[#7C6EF6] transition-colors">
+        <h4 className="text-xs font-semibold text-[#F2F2F6] line-clamp-2 leading-tight group-hover:text-[#F0B31C] transition-colors">
           {save.title}
         </h4>
-        <div className="text-[10px] text-[#9A9A9A] flex items-center justify-between pb-1">
-          <span className="truncate">{save.domain}</span>
+        <div className="text-[10px] text-[#A0A2B0] flex items-center justify-between pb-1">
+          <span className="truncate font-mono text-[#F0B31C]/80">{save.domain}</span>
           <span>•</span>
           <span>{formatRelativeDaysAgo(save.created_at)}</span>
         </div>
       </div>
 
       {/* Bottom actions bar */}
-      <div className="h-[36px] border-t border-[#2E2E2E] bg-[#141414] grid grid-cols-2 divide-x divide-[#2E2E2E]">
+      <div className="h-[36px] border-t border-[#F0B31C]/20 bg-[#08080C] grid grid-cols-2 divide-x divide-[#F0B31C]/20">
         <button
           onClick={handleReviewed}
-          className="flex items-center justify-center space-x-1 text-[11px] font-semibold text-[#4ADE80] hover:bg-[#4ADE80]/10 transition-colors active:scale-95"
+          className="flex items-center justify-center space-x-1 text-[11px] font-display font-bold uppercase tracking-wider text-[#F0B31C] hover:bg-[#F0B31C]/20 transition-all active:scale-95"
         >
-          <Check className="w-3.5 h-3.5" />
+          <Check className="w-3.5 h-3.5 stroke-[3]" />
           <span>Reviewed</span>
         </button>
         <button
           onClick={handleSkip}
-          className="flex items-center justify-center space-x-1 text-[11px] font-medium text-[#9A9A9A] hover:bg-[#242424] hover:text-white transition-colors active:scale-95"
+          className="flex items-center justify-center space-x-1 text-[11px] font-medium text-[#A0A2B0] hover:bg-[#1A1C2B] hover:text-[#F2F2F6] transition-colors active:scale-95"
         >
           <span>Skip</span>
           <ArrowRight className="w-3.5 h-3.5" />

@@ -29,11 +29,11 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
     <span
       onClick={onClick}
       style={{
-        backgroundColor: `${info.color}20`, // 15-20% opacity tint
+        backgroundColor: `${info.color}25`, // opacity tint
         color: info.color,
-        borderColor: `${info.color}35`,
+        borderColor: `${info.color}50`,
       }}
-      className={`inline-flex items-center font-medium rounded-full border transition-all duration-200 select-none ${
+      className={`inline-flex items-center font-display tracking-wide uppercase font-bold rounded-full border transition-all duration-200 select-none ${
         sizeClasses[size]
       } ${onClick ? 'cursor-pointer hover:scale-105 active:scale-95' : ''} ${className}`}
     >

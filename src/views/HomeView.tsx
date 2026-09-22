@@ -32,28 +32,47 @@ export const HomeView: React.FC = () => {
   const recentItems = saves.filter((s) => !s.is_archived).slice(0, 5);
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-[#0D0D0D] text-[#F2F2F2] animate-fadeIn">
+    <div className="flex-1 flex flex-col p-4 bg-[#08080C] text-[#F2F2F6] animate-fadeIn">
+      {/* iQOO Hackathon Edition Banner */}
+      <div className="w-full mb-4 p-3 rounded-2xl bg-gradient-to-r from-[#F0B31C]/20 via-[#12131C] to-[#08080C] border border-[#F0B31C]/40 flex items-center justify-between glow-iqoo relative overflow-hidden">
+        <div className="flex items-center space-x-2.5 z-10">
+          <div className="w-8 h-8 rounded-xl bg-[#F0B31C] flex items-center justify-center text-black font-display font-bold text-sm shadow-md">
+            ⚡
+          </div>
+          <div>
+            <div className="flex items-center space-x-1.5">
+              <span className="font-display tracking-widest text-[#F0B31C] font-bold text-xs uppercase">iQOO HACKATHON 2026</span>
+              <span className="text-[9px] bg-[#F0B31C]/30 text-[#F0B31C] px-1.5 py-0.5 rounded font-mono">FINALS</span>
+            </div>
+            <p className="text-[10px] text-[#A0A2B0] font-mono">India's Biggest Phone-First Hackathon</p>
+          </div>
+        </div>
+        <div className="text-right z-10">
+          <span className="text-[10px] font-mono font-bold text-[#F0B31C] uppercase tracking-wider block">QUEST FOR OVERCOME</span>
+        </div>
+      </div>
+
       {/* Header Area */}
       <div className="flex items-center justify-between mb-5 pt-1">
         <div>
-          <h1 className="text-xl font-bold text-[#F2F2F2] flex items-center gap-1.5">
+          <h1 className="text-xl font-bold text-[#F2F2F6] flex items-center gap-1.5 font-display tracking-wide">
             <span>{getGreeting()}, {profile.display_name || 'Arjun'}</span>
-            <span className="animate-pulse">👋</span>
+            <span className="animate-pulse">⚡</span>
           </h1>
-          <p className="text-xs text-[#9A9A9A] font-medium">{formattedDate}</p>
+          <p className="text-xs text-[#A0A2B0] font-medium">{formattedDate}</p>
         </div>
 
         <div className="flex items-center space-x-2">
           {/* Streak badge */}
-          <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#FBBF24]/15 border border-[#FBBF24]/30 text-[#FBBF24] text-xs font-semibold">
-            <Flame className="w-3.5 h-3.5 fill-[#FBBF24]" />
-            <span>{profile.streak_days}-day streak</span>
+          <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#F0B31C]/20 border border-[#F0B31C]/50 text-[#F0B31C] text-xs font-display font-bold uppercase tracking-wider glow-iqoo">
+            <Flame className="w-3.5 h-3.5 fill-[#F0B31C]" />
+            <span>{profile.streak_days}-DAY STREAK</span>
           </div>
 
           {/* Avatar button */}
           <button
             onClick={() => setScreen('profile')}
-            className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#7C6EF6] shadow-md hover:scale-105 transition-transform active:scale-95"
+            className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#F0B31C] shadow-glow hover:scale-105 transition-transform active:scale-95"
           >
             <img
               src={profile.avatar_url || 'https://picsum.photos/seed/user/100/100'}
@@ -68,18 +87,18 @@ export const HomeView: React.FC = () => {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center space-x-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#7C6EF6]" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9A9A9A]">
+            <Clock className="w-3.5 h-3.5 text-[#F0B31C]" />
+            <span className="text-[11px] font-display font-bold uppercase tracking-widest text-[#F0B31C]">
               Review Today
             </span>
           </div>
           {dueItems.length > 0 ? (
-            <span className="text-xs font-semibold text-[#7C6EF6] bg-[#7C6EF6]/15 px-2 py-0.5 rounded-full">
-              {dueItems.length} due
+            <span className="text-xs font-display font-bold uppercase text-[#F0B31C] bg-[#F0B31C]/20 border border-[#F0B31C]/40 px-2 py-0.5 rounded-full">
+              {dueItems.length} DUE
             </span>
           ) : (
-            <span className="text-xs font-semibold text-[#4ADE80] flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> All clear
+            <span className="text-xs font-semibold text-[#10B981] flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-[#F0B31C]" /> All clear
             </span>
           )}
         </div>
@@ -91,7 +110,7 @@ export const HomeView: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-[#1A1A1A] border border-[#2E2E2E] rounded-card p-4 text-center">
+          <div className="bg-[#12131C] border border-[#F0B31C]/20 rounded-card p-4 text-center">
             <EmptyState type="home_all_reviewed" />
           </div>
         )}
@@ -100,12 +119,12 @@ export const HomeView: React.FC = () => {
       {/* Recently Saved Section */}
       <section className="flex-1 mb-4">
         <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9A9A9A]">
+          <span className="text-[11px] font-display font-bold uppercase tracking-widest text-[#A0A2B0]">
             Recently Saved
           </span>
           <button
             onClick={() => setTab('inbox')}
-            className="text-xs text-[#7C6EF6] hover:text-[#9585F8] font-semibold transition-colors"
+            className="text-xs text-[#F0B31C] hover:text-[#FFCB14] font-display font-bold uppercase tracking-wider transition-colors"
           >
             See all →
           </button>

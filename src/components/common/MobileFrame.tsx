@@ -44,21 +44,24 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F2F2F2] flex flex-col items-center justify-center p-0 md:p-6 select-none font-['Inter',sans-serif]">
+    <div className="min-h-screen bg-[#050508] text-[#F2F2F6] flex flex-col items-center justify-center p-0 md:p-6 select-none font-['Inter_Tight',sans-serif]">
       {/* Top Reviewer Toolbar */}
-      <header className="w-full max-w-[440px] mb-3 px-3 py-2 bg-[#141414] border border-[#2E2E2E] rounded-2xl flex items-center justify-between text-xs shadow-md hidden md:flex">
+      <header className="w-full max-w-[440px] mb-3 px-3.5 py-2.5 bg-[#12131C]/90 backdrop-blur-md border border-[#F0B31C]/30 rounded-2xl flex items-center justify-between text-xs shadow-glow hidden md:flex">
         <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 rounded-lg bg-[#7C6EF6]/20 flex items-center justify-center text-[#7C6EF6]">
+          <div className="w-6 h-6 rounded-lg bg-[#F0B31C]/20 border border-[#F0B31C]/40 flex items-center justify-center text-[#F0B31C]">
             <Smartphone className="w-3.5 h-3.5" />
           </div>
-          <span className="font-semibold text-white">SavedFeed Prototype</span>
+          <div className="flex flex-col">
+            <span className="font-display tracking-wider text-[#F0B31C] font-bold text-xs uppercase">iQOO HACKATHON</span>
+            <span className="text-[9px] text-[#A0A2B0] font-mono tracking-tight">MYFEED · CITY BATTLES ⚡</span>
+          </div>
         </div>
 
         <div className="flex items-center space-x-1.5">
           <button
             onClick={triggerSimulatedPush}
             title="Simulate Push Nudge Notification"
-            className="p-1.5 rounded-lg bg-[#242424] hover:bg-[#7C6EF6]/30 text-[#7C6EF6] transition-colors flex items-center gap-1"
+            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#F0B31C]/30 text-[#F0B31C] border border-[#F0B31C]/20 transition-all flex items-center gap-1"
           >
             <Bell className="w-3.5 h-3.5" />
             <span className="text-[10px] hidden sm:inline font-semibold">Nudge</span>
@@ -67,7 +70,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={() => simulateShareIntent()}
             title="Simulate Share Intent from Instagram"
-            className="p-1.5 rounded-lg bg-[#242424] hover:bg-[#EC4899]/30 text-[#EC4899] transition-colors flex items-center gap-1"
+            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#EC4899]/30 text-[#EC4899] border border-[#EC4899]/20 transition-all flex items-center gap-1"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span className="text-[10px] hidden sm:inline font-semibold">Share</span>
@@ -76,7 +79,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={toggleDarkMode}
             title="Toggle Dark / Light Mode"
-            className="p-1.5 rounded-lg bg-[#242424] hover:bg-[#333333] text-[#9A9A9A] hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
           >
             {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
@@ -84,7 +87,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={toggleMobileFrame}
             title="Toggle Device Frame"
-            className="p-1.5 rounded-lg bg-[#242424] hover:bg-[#333333] text-[#9A9A9A] hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
           >
             {isMobileFramed ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
@@ -92,7 +95,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={resetMockData}
             title="Reset Mock Data"
-            className="p-1.5 rounded-lg bg-[#242424] hover:bg-[#333333] text-[#9A9A9A] hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -103,8 +106,8 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
       <div
         className={`w-full transition-all duration-300 relative flex flex-col ${
           isMobileFramed
-            ? 'max-w-[390px] h-[844px] rounded-[48px] border-[10px] border-[#222222] shadow-[0_0_60px_rgba(0,0,0,0.8)] overflow-hidden bg-[#0D0D0D]'
-            : 'max-w-[430px] min-h-screen md:min-h-[844px] rounded-none md:rounded-3xl border-0 md:border border-[#2E2E2E] bg-[#0D0D0D] overflow-hidden'
+            ? 'max-w-[390px] h-[844px] rounded-[48px] border-[10px] border-[#181926] shadow-[0_0_60px_rgba(240,179,28,0.25)] overflow-hidden bg-[#08080C]'
+            : 'max-w-[430px] min-h-screen md:min-h-[844px] rounded-none md:rounded-3xl border-0 md:border border-[#F0B31C]/30 bg-[#08080C] overflow-hidden'
         }`}
       >
         {/* Simulated Top Status Bar */}
