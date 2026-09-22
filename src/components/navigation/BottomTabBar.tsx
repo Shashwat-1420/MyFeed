@@ -26,7 +26,7 @@ export const BottomTabBar: React.FC = () => {
       )}
 
       {/* Nav bar frame */}
-      <nav className="h-[64px] bg-[#12131C]/95 backdrop-blur-lg border-t border-[#F0B31C]/30 px-3 flex items-center justify-around z-20">
+      <nav className="h-[64px] bg-panel/95 backdrop-blur-lg border-t border-[#F0B31C]/30 px-3 flex items-center justify-around z-20">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
           return (
@@ -35,11 +35,11 @@ export const BottomTabBar: React.FC = () => {
               onClick={() => setTab(tab.id)}
               className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition-all duration-200 ${
                 isActive
-                  ? 'bg-[#F0B31C]/20 text-[#F0B31C] border border-[#F0B31C]/40 font-semibold scale-105 glow-iqoo'
-                  : 'text-[#626478] hover:text-[#F2F2F6] active:scale-95'
+                  ? 'bg-[#F0B31C]/20 text-gold border border-[#F0B31C]/40 font-semibold scale-105 glow-iqoo'
+                  : 'text-dim hover:text-ink active:scale-95'
               }`}
             >
-              <div className={isActive ? 'text-[#F0B31C]' : 'text-[#626478]'}>{tab.icon}</div>
+              <div className={isActive ? 'text-gold' : 'text-dim'}>{tab.icon}</div>
               {isActive && <span className="text-xs font-display tracking-wider font-bold uppercase">{tab.label}</span>}
             </button>
           );

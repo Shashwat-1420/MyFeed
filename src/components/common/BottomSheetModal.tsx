@@ -36,7 +36,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
 
       {/* Sheet panel */}
       <div
-        className="relative w-full bg-[#12131C] border-t border-[#F0B31C]/40 rounded-t-[24px] px-5 pt-3 pb-8 shadow-sheet z-10 transform transition-transform duration-300 ease-out max-h-[85vh] overflow-y-auto glow-iqoo"
+        className="relative w-full bg-panel border-t border-[#F0B31C]/40 rounded-t-[24px] px-5 pt-3 pb-8 shadow-sheet z-10 transform transition-transform duration-300 ease-out max-h-[85vh] overflow-y-auto glow-iqoo"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag handle pill */}
@@ -45,10 +45,10 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
         {/* Title bar */}
         {title && (
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#F0B31C]/20">
-            <h3 className="text-base font-display font-bold uppercase tracking-wider text-[#F0B31C]">{title}</h3>
+            <h3 className="text-base font-display font-bold uppercase tracking-wider text-gold">{title}</h3>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-[#1A1C2B] border border-[#F0B31C]/30 flex items-center justify-center text-[#A0A2B0] hover:text-[#F0B31C] transition-colors"
+              className="w-8 h-8 rounded-full bg-chip border border-[#F0B31C]/30 flex items-center justify-center text-muted hover:text-gold transition-colors"
             >
               <X className="w-4 h-4" />
             </button>

@@ -26,14 +26,14 @@ export const InboxView: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-[#08080C] text-[#F2F2F6] animate-fadeIn">
+    <div className="flex-1 flex flex-col p-4 bg-canvas text-ink animate-fadeIn">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between mb-3 pt-1">
-        <h1 className="text-xl font-display font-bold uppercase tracking-wider text-[#F0B31C]">Inbox</h1>
+        <h1 className="text-xl font-display font-bold uppercase tracking-wider text-gold">Inbox</h1>
         <button
           onClick={handleRefresh}
-          className={`p-2 rounded-xl bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F0B31C] transition-all ${
-            isRefreshing ? 'animate-spin text-[#F0B31C]' : ''
+          className={`p-2 rounded-xl bg-panel border border-[#F0B31C]/30 text-muted hover:text-gold transition-all ${
+            isRefreshing ? 'animate-spin text-gold' : ''
           }`}
           title="Pull to refresh"
         >
@@ -44,9 +44,9 @@ export const InboxView: React.FC = () => {
       {/* Search trigger bar */}
       <div
         onClick={() => setTab('search')}
-        className="w-full h-11 bg-[#12131C] border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-xl px-3.5 flex items-center space-x-2.5 text-xs text-[#A0A2B0] cursor-pointer mb-3 transition-all shadow-sm"
+        className="w-full h-11 bg-panel border border-[#F0B31C]/30 hover:border-[#F0B31C] rounded-xl px-3.5 flex items-center space-x-2.5 text-xs text-muted cursor-pointer mb-3 transition-all shadow-sm"
       >
-        <Search className="w-4 h-4 text-[#F0B31C]" />
+        <Search className="w-4 h-4 text-gold" />
         <span>Search your saves...</span>
       </div>
 
@@ -58,7 +58,7 @@ export const InboxView: React.FC = () => {
           className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 transition-all ${
             categoryFilter === 'all'
               ? 'bg-[#F0B31C] text-black shadow-glow'
-              : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
+              : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
           }`}
         >
           All ({saves.filter((s) => !s.is_archived).length})
@@ -70,7 +70,7 @@ export const InboxView: React.FC = () => {
           className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
             categoryFilter === 'favourites'
               ? 'bg-[#FFCB14] text-black shadow-glow'
-              : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
+              : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
           }`}
         >
           <Star className="w-3 h-3 fill-current" />
@@ -88,7 +88,7 @@ export const InboxView: React.FC = () => {
               className={`px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider shrink-0 flex items-center space-x-1 transition-all ${
                 isActive
                   ? 'bg-[#F0B31C] text-black shadow-glow'
-                  : 'bg-[#12131C] border border-[#F0B31C]/30 text-[#A0A2B0] hover:text-[#F2F2F6]'
+                  : 'bg-panel border border-[#F0B31C]/30 text-muted hover:text-ink'
               }`}
             >
               <span>{cat.emoji}</span>

@@ -44,16 +44,16 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050508] text-[#F2F2F6] flex flex-col items-center justify-center p-0 md:p-6 select-none font-['Inter_Tight',sans-serif]">
+    <div className="min-h-screen bg-canvas text-ink flex flex-col items-center justify-center p-0 md:p-6 select-none font-['Inter_Tight',sans-serif]">
       {/* Top Reviewer Toolbar */}
-      <header className="w-full max-w-[440px] mb-3 px-3.5 py-2.5 bg-[#12131C]/90 backdrop-blur-md border border-[#F0B31C]/30 rounded-2xl flex items-center justify-between text-xs shadow-glow hidden md:flex">
+      <header className="w-full max-w-[440px] mb-3 px-3.5 py-2.5 bg-panel/90 backdrop-blur-md border border-[#F0B31C]/30 rounded-2xl flex items-center justify-between text-xs shadow-glow hidden md:flex">
         <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 rounded-lg bg-[#F0B31C]/20 border border-[#F0B31C]/40 flex items-center justify-center text-[#F0B31C]">
+          <div className="w-6 h-6 rounded-lg bg-[#F0B31C]/20 border border-[#F0B31C]/40 flex items-center justify-center text-gold">
             <Smartphone className="w-3.5 h-3.5" />
           </div>
           <div className="flex flex-col">
-            <span className="font-display tracking-wider text-[#F0B31C] font-bold text-xs uppercase">iQOO HACKATHON</span>
-            <span className="text-[9px] text-[#A0A2B0] font-mono tracking-tight">MYFEED · CITY BATTLES ⚡</span>
+            <span className="font-display tracking-wider text-gold font-bold text-xs uppercase">iQOO HACKATHON</span>
+            <span className="text-[9px] text-muted font-mono tracking-tight">MYFEED · CITY BATTLES ⚡</span>
           </div>
         </div>
 
@@ -61,7 +61,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={triggerSimulatedPush}
             title="Simulate Push Nudge Notification"
-            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#F0B31C]/30 text-[#F0B31C] border border-[#F0B31C]/20 transition-all flex items-center gap-1"
+            className="p-1.5 rounded-lg bg-chip hover:bg-[#F0B31C]/30 text-gold border border-[#F0B31C]/20 transition-all flex items-center gap-1"
           >
             <Bell className="w-3.5 h-3.5" />
             <span className="text-[10px] hidden sm:inline font-semibold">Nudge</span>
@@ -70,7 +70,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={() => simulateShareIntent()}
             title="Simulate Share Intent from Instagram"
-            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#EC4899]/30 text-[#EC4899] border border-[#EC4899]/20 transition-all flex items-center gap-1"
+            className="p-1.5 rounded-lg bg-chip hover:bg-gold/30 text-gold border border-gold/20 transition-all flex items-center gap-1"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span className="text-[10px] hidden sm:inline font-semibold">Share</span>
@@ -79,7 +79,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={toggleDarkMode}
             title="Toggle Dark / Light Mode"
-            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
+            className="p-1.5 rounded-lg bg-chip hover:bg-edge text-muted hover:text-gold border border-white/5 transition-all"
           >
             {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
@@ -87,7 +87,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={toggleMobileFrame}
             title="Toggle Device Frame"
-            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
+            className="p-1.5 rounded-lg bg-chip hover:bg-edge text-muted hover:text-gold border border-white/5 transition-all"
           >
             {isMobileFramed ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
@@ -95,7 +95,7 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
           <button
             onClick={resetMockData}
             title="Reset Mock Data"
-            className="p-1.5 rounded-lg bg-[#1A1C2B] hover:bg-[#2A2D42] text-[#A0A2B0] hover:text-[#F0B31C] border border-white/5 transition-all"
+            className="p-1.5 rounded-lg bg-chip hover:bg-edge text-muted hover:text-gold border border-white/5 transition-all"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -106,16 +106,16 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
       <div
         className={`w-full transition-all duration-300 relative flex flex-col ${
           isMobileFramed
-            ? 'max-w-[390px] h-[844px] rounded-[48px] border-[10px] border-[#181926] shadow-[0_0_60px_rgba(240,179,28,0.25)] overflow-hidden bg-[#08080C]'
-            : 'max-w-[430px] min-h-screen md:min-h-[844px] rounded-none md:rounded-3xl border-0 md:border border-[#F0B31C]/30 bg-[#08080C] overflow-hidden'
+            ? 'max-w-[390px] h-[844px] rounded-[48px] border-[10px] border-[#181926] shadow-[0_0_60px_rgba(240,179,28,0.25)] overflow-hidden bg-canvas'
+            : 'max-w-[430px] min-h-screen md:min-h-[844px] rounded-none md:rounded-3xl border-0 md:border border-[#F0B31C]/30 bg-canvas overflow-hidden'
         }`}
       >
         {/* Simulated Top Status Bar */}
-        <div className="h-11 bg-transparent text-[#F2F2F2] flex items-center justify-between px-6 pt-2 shrink-0 z-40 select-none">
+        <div className="h-11 bg-transparent text-ink flex items-center justify-between px-6 pt-2 shrink-0 z-40 select-none">
           <span className="text-xs font-semibold tracking-tight">{currentTime}</span>
           {/* Dynamic Island / Notch */}
           <div className="w-24 h-4 bg-black rounded-full mx-auto hidden sm:block border border-[#1A1A1A]" />
-          <div className="flex items-center space-x-1.5 text-xs text-[#9A9A9A]">
+          <div className="flex items-center space-x-1.5 text-xs text-muted">
             <Wifi className="w-3.5 h-3.5" />
             <Battery className="w-4 h-4" />
           </div>

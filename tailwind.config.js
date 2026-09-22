@@ -7,12 +7,33 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      /*
+       * Semantic theme tokens (Phase A) — backed by CSS variables in
+       * src/index.css so dark/light mode actually repaints.
+       * Use these for chrome instead of hardcoded hex:
+       *   bg-canvas bg-panel bg-chip · text-ink text-muted text-dim
+       *   border-edge · text-gold (readable gold in both modes)
+       * Gold FILLS stay literal #F0B31C + text-black (works on both modes).
+       */
       fontFamily: {
         display: ['"Chakra Petch"', 'sans-serif'],
         sans: ['"Inter Tight"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
+        /* Semantic theme tokens (Phase A) — CSS-var backed, see src/index.css */
+        canvas: 'rgb(var(--bg-primary) / <alpha-value>)',
+        panel: 'rgb(var(--bg-secondary) / <alpha-value>)',
+        chip: 'rgb(var(--bg-tertiary) / <alpha-value>)',
+        edge: 'rgb(var(--border-strong) / <alpha-value>)',
+        ink: 'rgb(var(--text-primary) / <alpha-value>)',
+        muted: 'rgb(var(--text-secondary) / <alpha-value>)',
+        dim: 'rgb(var(--text-tertiary) / <alpha-value>)',
+        gold: {
+          DEFAULT: 'rgb(var(--accent-ink) / <alpha-value>)',
+          fill: 'rgb(var(--accent-fill) / <alpha-value>)',
+          bright: '#FFCB14',
+        },
         iqoo: {
           DEFAULT: '#F0B31C',
           bright: '#FFCB14',

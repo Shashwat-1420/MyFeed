@@ -20,7 +20,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
         height,
         borderRadius,
       }}
-      className={`animate-shimmer bg-[#1A1A1A] border border-[#2E2E2E]/40 ${className}`}
+      className={`animate-shimmer bg-chip border border-edge/40 ${className}`}
     />
   );
 };

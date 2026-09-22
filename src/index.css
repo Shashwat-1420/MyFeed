@@ -2,58 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Semantic theme tokens (Phase A).
+ * Colors are stored as RGB triplets so Tailwind opacity modifiers work:
+ *   bg-panel/90, text-gold/80, ...
+ * Dark values live on :root; light overrides live on html.light-mode
+ * (toggled by toggleDarkMode in src/store/useSavedFeedStore.ts).
+ * Components must consume these via tailwind.config.js color tokens
+ * (bg-canvas, bg-panel, bg-chip, text-ink, text-muted, text-dim,
+ * border-edge, text-gold) — never hardcode chrome hexes.
+ */
 @layer base {
   :root {
-    --bg-primary: #08080C;
-    --bg-secondary: #12131C;
-    --bg-tertiary: #1A1C2B;
-    --border-color: rgba(240, 179, 28, 0.25);
-    --text-primary: #F2F2F6;
-    --text-secondary: #A0A2B0;
-    --text-tertiary: #626478;
-    --accent-primary: #F0B31C;
-    --accent-hover: #FFCB14;
+    /* Surfaces */
+    --bg-primary: 8 8 12;        /* #08080C page background   */
+    --bg-secondary: 18 19 28;    /* #12131C cards, sheets, nav */
+    --bg-tertiary: 26 28 43;     /* #1A1C2B chips, inputs, hovers */
+    --border-strong: 46 46 46;   /* #2E2E2E input borders, dividers */
+    /* Text */
+    --text-primary: 242 242 246;   /* #F2F2F6 headings */
+    --text-secondary: 160 162 176; /* #A0A2B0 subtitles */
+    --text-tertiary: 98 100 120;   /* #626478 placeholders, inactive */
+    /* Brand gold */
+    --accent-fill: 240 179 28;   /* #F0B31C gold fills (always + black text) */
+    --accent-ink: 240 179 28;    /* gold as text/border, readable on dark */
   }
 
   .light-mode {
-    --bg-primary: #F5F5F0;
-    --bg-secondary: #FFFFFF;
-    --bg-tertiary: #EAEAE0;
-    --border-color: rgba(200, 146, 10, 0.3);
-    --text-primary: #0D0E12;
-    --text-secondary: #5E606E;
-    --text-tertiary: #888A9C;
-    --accent-primary: #F0B31C;
-    --accent-hover: #C8920A;
+    /* Surfaces */
+    --bg-primary: 245 245 240;     /* #F5F5F0 */
+    --bg-secondary: 255 255 255;   /* #FFFFFF */
+    --bg-tertiary: 234 234 224;    /* #EAEAE0 */
+    --border-strong: 222 222 207;  /* #DEDECF */
+    /* Text */
+    --text-primary: 13 14 18;      /* #0D0E12 */
+    --text-secondary: 94 96 110;   /* #5E606E */
+    --text-tertiary: 136 138 156;  /* #888A9C */
+    /* Brand gold */
+    --accent-fill: 240 179 28;     /* same gold fill, still black text */
+    --accent-ink: 122 88 4;        /* #7A5804 — gold text readable on light */
   }
 }
 
 /* Glassmorphism & iQOO Cyber Utilities */
 .glass-iqoo {
-  background: rgba(18, 19, 28, 0.85);
+  background: rgb(var(--bg-secondary) / 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(240, 179, 28, 0.2);
+  border: 1px solid rgb(var(--accent-ink) / 0.2);
 }
 
 .glass-iqoo-gold {
-  background: linear-gradient(135deg, rgba(240, 179, 28, 0.12) 0%, rgba(18, 19, 28, 0.9) 100%);
+  background: linear-gradient(135deg, rgb(var(--accent-fill) / 0.12) 0%, rgb(var(--bg-secondary) / 0.9) 100%);
   backdrop-filter: blur(14px);
-  border: 1px solid rgba(240, 179, 28, 0.4);
-  box-shadow: 0 0 20px rgba(240, 179, 28, 0.15);
+  border: 1px solid rgb(var(--accent-fill) / 0.4);
+  box-shadow: 0 0 20px rgb(var(--accent-fill) / 0.15);
 }
 
 .glow-iqoo {
-  box-shadow: 0 0 20px rgba(240, 179, 28, 0.35);
+  box-shadow: 0 0 20px rgb(var(--accent-fill) / 0.35);
 }
 
 .glow-iqoo-lg {
-  box-shadow: 0 0 35px rgba(240, 179, 28, 0.5);
+  box-shadow: 0 0 35px rgb(var(--accent-fill) / 0.4);
 }
 
 .text-iqoo-gradient {
   background: linear-gradient(135deg, #FFCB14 0%, #F0B31C 50%, #C8920A 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -63,10 +80,10 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08080C;
+  background: rgb(var(--bg-primary));
 }
 ::-webkit-scrollbar-thumb {
-  background: #F0B31C;
+  background: rgb(var(--accent-fill));
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -82,7 +99,7 @@
   scrollbar-width: none;
 }
 
-/* Shimmer animation */
+/* Shimmer animation (skeleton loaders) */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -96,6 +113,50 @@
   background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
+}
+
+.light-mode .animate-shimmer {
+  background: linear-gradient(90deg, #EAEAE0 25%, #FFFFFF 50%, #EAEAE0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Fade-in used by every view on mount */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Bounce-in used by onboarding slides + notification banner */
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  75% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bounceIn {
+  animation: bounceIn 0.4s ease-out;
 }
 
 /* Button fill animation */
