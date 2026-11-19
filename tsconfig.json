@@ -4,10 +4,14 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["index.ts", "nativewind-env.d.ts", "src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "index.ts",
+    "nativewind-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }
